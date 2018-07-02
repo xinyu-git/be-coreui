@@ -16,12 +16,12 @@ Axios.defaults.headers.post['Content-Type'] = 'application/json';
 Axios.defaults.headers.common.Authorization = 'Bearer ' + (window.token_value || localStorage.getItem("token_value"));
 Axios.interceptors.response.use(
     response => {
-        // if (response && response.data && (response.data.errCode == "200002")) {
-        //     console.error("axios response error token");
-        //     console.log("we should re login", router, router.replace)
-        //     localStorage.removeItem("token_value")
-        //     window.location.href = '/';
-        // }
+        if (response && response.data && (response.data.errCode == "200002")) {
+            console.error("axios response error token");
+            console.log("we should re login", router, router.replace)
+            localStorage.removeItem("token_value")
+            window.location.href = '/';
+        }
         return response.data;
     },
     error => {
@@ -48,6 +48,21 @@ Axios.interceptors.response.use(
         return Promise.reject(error)   // 返回接口返回的错误信息
     }
 );
+Axios.interceptors.request.use(
+    config => {
+        const token_value = localStorage.getItem('token_value');
+        if(token_value){
+            config.headers.common.Authorization = 'Bearer ' + token_value
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+)
+
+
+
 
 Axios.defaults.timeout = 5000;
 Vue.prototype.$http = Axios;

@@ -1,56 +1,46 @@
 export default {
     items: [
       {
-        name: '主页',
+        name: '后台主页',
         url: '/dashboard',
-        icon: 'icon-speedometer',
+        icon: 'fa fa-tachometer',
         badge: {
           variant: 'primary',
           text: 'NEW'
         }
       },
       {
-        title: true,
-        name: '标题一',
-        class: '',
-        wrapper: {
-          element: '',
-          attributes: {}
-        }
-      },
-      {
-        name: '示例菜单',
-        url: '/theme/colors',
-        icon: 'icon-drop'
-      },
-      {
-        name: '示例菜单',
-        url: '/theme/typography',
-        icon: 'icon-pencil'
-      },
-      {
-        title: true,
-        name: '标题一',
-        class: '',
-        wrapper: {
-          element: '',
-          attributes: {}
-        }
-      },
-      {
-        name: '菜单',
-        url: '/base',
-        icon: 'icon-puzzle',
+        name: '商品管理',
+        url: '/dashboard',
+        icon: 'fa fa-product-hunt',
         children: [
           {
-            name: '子菜单',
-            url: '/base/breadcrumbs',
-            icon: 'icon-puzzle'
+            name: '商品列表',
+            url: '/goods/goodsList',
+            icon: 'fa fa-circle'
           },
           {
-            name: '子菜单',
+            name: '商品分类',
             url: '/base/cards',
-            icon: 'icon-puzzle'
+            icon: 'fa fa-circle'
+          }
+          ,
+          {
+            name: '品牌管理',
+            url: '/base/cards',
+            icon: 'fa fa-circle'
+          }
+        ]
+      },
+      {
+        name: '订单中心',
+        url: '/base',
+        icon: 'fa fa-large fa-truck',
+        children: [
+          {
+            name: '订单列表',
+            url: '/order/orderList',
+            icon: 'fa fa-circle'
           }
         ]
       }

@@ -12,11 +12,11 @@ const formatTime = (d,type) => {
     let second = date.getSeconds()
     switch(type){
         case 1:
-            return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+            return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
         case 2:
-            return [year, month, day].map(formatNumber).join('/')
+            return [year, month, day].map(formatNumber).join('-')
         default:
-            return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute].map(formatNumber).join(':')
+            return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute].map(formatNumber).join(':')
     }
 
 }

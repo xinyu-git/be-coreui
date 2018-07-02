@@ -1,0 +1,254 @@
+<template>
+   <div class="content">
+       <div class="content-nav">
+            <div class="breadcrumb-box">
+                <b-breadcrumb :items="items"/>
+            </div>
+            <div class="addGoods-btn">
+                <b-button variant='primary lg'>返回列表</b-button>
+            </div>
+        </div>
+       <div class="container-fluid">
+            <b-card>
+                <b-form @submit="saveGood" >
+                    <b-form-group id="goodsNameLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品名称" 
+                            label-class="text-sm-right"
+                            label-for="goodsNameInput">
+                        <b-form-input   id="goodsNameInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-3"
+                                        v-model="goodForm.name"
+                                        placeholder="请输入商品名称"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsNumberLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品编号" 
+                            label-class="text-sm-right"
+                            label-for="goodsNumberInput">
+                        <b-form-input   id="goodsNumberInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-3"
+                                        type="number"
+                                        v-model="goodForm.goods_sn"
+                                        placeholder="请输入商品编号"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsDescLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品描述" 
+                            label-class="text-sm-right"
+                            label-for="goodsDescInput">
+                        <b-form-textarea   id="goodsDescInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-6"
+                                        :rows="3"
+                                        v-model="goodForm.goods_desc"
+                                        placeholder="请输入商品描述"></b-form-textarea>
+                    </b-form-group>
+                    <b-form-group id="goodsPicLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品图片" 
+                            label-class="text-sm-right"
+                            label-for="goodsPicInput">
+                        <b-form-input   id="goodsPicInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-4"
+                                        v-model="goodForm.list_pic_url"
+                                        placeholder="请输入商品图片地址"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsPriceLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品价格" 
+                            label-class="text-sm-right"
+                            label-for="goodsPriceInput">
+                        <b-form-input   id="goodsPriceInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-2"
+                                        type="number"
+                                        v-model="goodForm.retail_price"
+                                        placeholder="请输入商品价格"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsIntegralLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="积分" 
+                            label-class="text-sm-right"
+                            label-for="goodsIntegralInput">
+                        <b-form-input   id="goodsIntegralInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-2"
+                                        type="number"
+                                        v-model="goodForm.integral"
+                                        placeholder="请输入积分"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsVolumeLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品库存" 
+                            label-class="text-sm-right"
+                            label-for="goodsVolumeInput">
+                        <b-form-input   id="goodsVolumeInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-2"
+                                        type="number"
+                                        v-model="goodForm.goods_number"
+                                        placeholder="请输入商品库存"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsTypeLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label="推荐类型" 
+                            label-class="text-sm-right"
+                            >
+                            <div class="goodsTypeCheckbox">
+                                <b-form-checkbox  v-model="goodForm.is_new">新品</b-form-checkbox>
+                                <b-form-checkbox  v-model="goodForm.is_hot">人气</b-form-checkbox>
+                            </div>
+                    </b-form-group>
+                    <b-form-group id="goodsOnSaleLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label="上架" 
+                            label-class="text-sm-right"
+                            >
+                         <c-switch class="mx-1" color="info" v-model="goodForm.is_on_sale" variant="3d" />
+                    </b-form-group>
+                    <b-form-group id="goodsOrderLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="排序" 
+                            label-class="text-sm-right"
+                            label-for="goodsOrderInput">
+                        <b-form-input   id="goodsOrderInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-2"
+                                        type="number"
+                                        v-model="goodForm.sort_order"
+                                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group horizontal :label-cols="1">
+                            <b-button type="submit" variant="primary">确定保存</b-button>
+                            <b-button type="button" variant="danger" @click="onCancel">取消</b-button>
+                    </b-form-group>
+                </b-form>
+                <!-- 模态窗 -->
+                <b-modal ref="myModalRef" centered hide-footer>
+                    <div class="d-block text-center">
+                      <h3> {{addGoodMsg}} </h3>
+                    </div>
+                    <b-btn class="mt-3" variant="primary" block @click="hideModal">确认</b-btn>
+                </b-modal>
+            </b-card>
+       </div>
+   </div>
+</template>
+<script>
+import { Switch as cSwitch } from '@coreui/vue'
+    export default{
+        name:'goodsAddPage',
+        components:{
+            cSwitch
+        },
+        data : () => {
+            return {
+                goodId:null,
+                items: [{
+                    text: '首页',
+                    href: '#'
+                }, {
+                    text: '商品管理',
+                    href: '#'
+                }, {
+                    text: '添加商品',
+                    active: true
+                }],
+                good_backup:{},
+                goodForm: {
+                    name:'',
+                    goods_sn:'',
+                    goods_desc:'',
+                    list_pic_url:'',
+                    retail_price:'',
+                    goods_number:'',
+                    integral:'',
+                    is_new:false,
+                    is_hot:false,
+                    is_on_sale:false,
+                    sort_order:100
+                },
+                addGoodMsg:'',
+                addGoodFlag:false
+            }
+        },
+        async mounted () {
+           this.goodId=this.$route.params.id
+           if(this.goodId!=-999){
+               this.getGoodInfo();
+           }
+        },
+        methods : {
+            async getGoodInfo(){
+                let self= this;
+                let result = await self.$http.get(`api/be/goods/info?id=${self.goodId}`)
+                self.goodForm = result.data;
+                self.good_backup={...result.data};
+            },
+            async saveGood(){
+                let self=this;
+                //return false;
+                let result=await self.$http.post('api/be/goods/store',self.goodForm)
+                if(result.errno==0){
+                    self.showModal ();
+                    self.addGoodMsg='添加商品成功';
+                    this.addGoodFlag=true;
+                }else{
+                    self.showModal ();
+                    self.addGoodMsg='添加商品失败';
+                }               
+            },
+            onCancel(){
+                let self=this;
+                self.goodForm = {...self.good_backup};
+            },
+            showModal () {
+                this.$refs.myModalRef.show();
+            },
+            hideModal () {
+                this.$refs.myModalRef.hide();
+                if(this.addGoodFlag){
+                    this.$router.push('/goods/goodsList')
+                }
+            }
+        }
+    }
+</script>
+<style lang="scss">
+.content-nav{display:flex;background: #fff;margin-bottom: 1.5rem;padding:0 30px;}
+.content-nav .breadcrumb-box{flex: 1;color:#8492A6;}
+.content-nav .breadcrumb-box .breadcrumb{background: none;border:none;margin-bottom: 0;}
+.addGoods-btn{width: auto;display:flex;align-items: center;}
+.goodsTypeCheckbox{align-items: center;height: 100%;display: flex;}
+
+</style>

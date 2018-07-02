@@ -37,10 +37,10 @@
         <SidebarMinimizer/>
       </AppSidebar>
       <main class="main">
-        <breadcrumb :list="list"/>
-        <div class="container-fluid">
+        <router-view></router-view>
+        <!-- <div class="container-fluid">
           <router-view></router-view>
-        </div>
+        </div> -->
       </main>
       <AppAside fixed>
         <!--aside-->
@@ -55,7 +55,7 @@
 
 <script>
 import nav from '../_nav'
-import { Header as AppHeader, SidebarToggler, Sidebar as AppSidebar, SidebarFooter, SidebarForm, SidebarHeader, SidebarMinimizer, SidebarNav, Aside as AppAside, AsideToggler, Footer as TheFooter, Breadcrumb } from '@coreui/vue'
+import { Header as AppHeader, SidebarToggler, Sidebar as AppSidebar, SidebarFooter, SidebarForm, SidebarHeader, SidebarMinimizer, SidebarNav, Aside as AppAside, AsideToggler, Footer as TheFooter } from '@coreui/vue'
 import Aside from './Aside'
 import Header from './Header'
 
@@ -67,7 +67,6 @@ export default {
     AppSidebar,
     AppAside,
     TheFooter,
-    Breadcrumb,
     Aside,
     Header,
     SidebarForm,
@@ -85,9 +84,6 @@ export default {
   computed: {
     name () {
       return this.$route.name
-    },
-    list () {
-      return this.$route.matched
     }
   }
 }

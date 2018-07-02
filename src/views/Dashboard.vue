@@ -1,9 +1,8 @@
 <template>
   <div class="animated fadeIn">
     <b-row>
-      this is dashboard
+      <!-- <router-view></router-view> -->
     </b-row>
-
   </div>
 </template>
 
@@ -11,7 +10,7 @@
 import Bus from '../bus.js'
 export default {
   name: 'dashboard',
-  components: {  },
+  components: { },
   data: function () {
     return {
     }
@@ -21,9 +20,9 @@ export default {
   },
   methods: {
     async getdataTest(){
-      let self = this;
-      let result = await this.$http.get('api/shop/index/index')
-      console.log(result)
+      //let self = this;
+      //let result = await this.$http.get('api/shop/index/index')
+      //console.log(result)
     }
   }
 }
@@ -34,4 +33,5 @@ export default {
   #card-chart-01, #card-chart-02 {
     width: 100% !important;
   }
+  .app{background:#f5f7f9;}
 </style>

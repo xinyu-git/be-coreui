@@ -11,15 +11,19 @@ module.exports = {
     assetsPublicPath: "/",
     proxyTable: {
       '/api':{
-          target: 'https://card.kong.net',
+          target: 'https://be.kong.net',
           changeOrigin: true
+      },
+      '/auth':{
+        target: 'https://be.kong.net',
+        changeOrigin: true
       }
     },
     cssSourceMap: false,
 
     // Various Dev Server settings
     host: "127.0.0.1", // can be overwritten by process.env.HOST
-    port: 3030, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,

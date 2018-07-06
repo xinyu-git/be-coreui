@@ -97,12 +97,11 @@ import {formatTime} from '../../filters/index.js'
         methods: { 
             async getOrderDetails() {
               let self = this;
-              let result = await self.$http.get('api/be/order/info?id='+self.id+' ')
+              let result = await self.$http.get(`api/be/order/info?id=${self.id}`)
               if(result.errno==0){
                     self.orderGoodsData.push(result.data); 
                     self.buyGoodsDetails=result.data.orderGoods;
               }
-              //console.log(result)
             }
         },
         filters: {

@@ -25,21 +25,6 @@
                                         v-model="goodForm.name"
                                         placeholder="请输入商品名称"></b-form-input>
                     </b-form-group>
-                    <b-form-group id="goodsNumberLabel" 
-                            horizontal
-                            :label-cols="1"
-                            label-size="md" 
-                            label="商品编号" 
-                            label-class="text-sm-right"
-                            label-for="goodsNumberInput">
-                        <b-form-input   id="goodsNumberInput"
-                                        required
-                                        size="md" 
-                                        class="col-sm-3"
-                                        type="number"
-                                        v-model="goodForm.goods_sn"
-                                        placeholder="请输入商品编号"></b-form-input>
-                    </b-form-group>
                     <b-form-group id="goodsDescLabel" 
                             horizontal
                             :label-cols="1"
@@ -68,6 +53,22 @@
                                         class="col-sm-4"
                                         v-model="goodForm.list_pic_url"
                                         placeholder="请输入商品图片地址"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsFocusPicLabel" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品轮播图" 
+                            label-class="text-sm-right"
+                            label-for="goodsFocusPicInput">
+                        <b-form-textarea   id="goodsFocusPicInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-6"
+                                        :rows="3"
+                                        v-model="goodForm.grallerys_pic_url"
+                                        placeholder="请输入商品轮播图地址,多个图片以“,”分割">
+                                    </b-form-textarea>    
                     </b-form-group>
                     <b-form-group id="goodsPriceLabel" 
                             horizontal
@@ -149,7 +150,7 @@
                                         ></b-form-input>
                     </b-form-group>
                     <b-form-group horizontal :label-cols="1">
-                            <b-button type="submit" variant="primary">确定保存</b-button>
+                            <b-button type="submit" variant="primary">下一步</b-button>
                             <b-button type="button" variant="danger" @click="onCancel">取消</b-button>
                     </b-form-group>
                 </b-form>
@@ -187,9 +188,9 @@ import { Switch as cSwitch } from '@coreui/vue'
                 good_backup:{},
                 goodForm: {
                     name:'',
-                    goods_sn:'',
                     goods_desc:'',
                     list_pic_url:'',
+                    grallerys_pic_url:'',
                     retail_price:'',
                     goods_number:'',
                     integral:'',
@@ -217,16 +218,18 @@ import { Switch as cSwitch } from '@coreui/vue'
             },
             async saveGood(){
                 let self=this;
-                //return false;
+                console.log(self.goodForm)
+                self.$router.push('/goods/goodsStandard/ ')
+                return false;
                 let result=await self.$http.post('api/be/goods/store',self.goodForm)
-                if(result.errno==0){
-                    self.showModal ();
-                    self.addGoodMsg='添加商品成功';
-                    this.addGoodFlag=true;
-                }else{
-                    self.showModal ();
-                    self.addGoodMsg='添加商品失败';
-                }               
+                // if(result.errno==0){
+                //     self.showModal ();
+                //     self.addGoodMsg='添加商品成功';
+                //     this.addGoodFlag=true;
+                // }else{
+                //     self.showModal ();
+                //     self.addGoodMsg='添加商品失败';
+                // }               
             },
             onCancel(){
                 let self=this;

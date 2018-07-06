@@ -5,9 +5,10 @@ import Dashboard from '@/views/Dashboard'
 import Login from '@/views/pages/Login'
 import goodsList from '@/views/goods/goodsList'
 import goodsAddPage from '@/views/goods/goodsAddPage'
+import goodsStandard from '@/views/goods/goodsStandard'
 import orderList from '@/views/order/orderList'
 import orderDetails from '@/views/order/orderDetails'
-
+import skuTypeOne from '@/views/goods/skuTypeOne'
 
 const PAGENOTFOUND = r => require.ensure([], () => r(require('@/views/pages/404')), 'sys')
 
@@ -45,6 +46,18 @@ const routes = [
         path: '/goods/goodsAddPage/:id',
         name: 'goodsAddPage',
         component: goodsAddPage,
+        meta: {requireAuth:true}
+      },
+      {
+        path: '/goods/goodsStandard',
+        name: 'goodsStandard',
+        component: goodsStandard,
+        meta: {requireAuth:true}
+      },
+      {
+        path: '/goods/skuTypeOne',
+        name: 'skuTypeOne',
+        component: skuTypeOne,
         meta: {requireAuth:true}
       },
       {

@@ -92,7 +92,9 @@ import {formatTime} from '../../filters/index.js'
             },
             async getOrderList() {
                 let self = this;
-                let result = await this.$http.get('api/be/order/index?page='+self.currentPage+'&size='+self.pageSize+'&orderSn='+self.orderSn+'&consignee='+self.consignee+' ')
+                let result = await this.$http.get(
+                    `api/be/order/index?page=${self.currentPage}&size=${self.pageSize}&orderSn=${self.orderSn}&consignee=${self.consignee}`
+                );
                 if(result.errno==0){
                     if(result.data.count!=0){
                         self.count = result.data.count;

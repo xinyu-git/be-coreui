@@ -54,13 +54,13 @@
         data : () => {
             return {
                 items: [{
-                    text: 'Admin',
+                    text: '首页',
                     href: '#'
                 }, {
-                    text: 'Manage',
+                    text: '商品管理',
                     href: '#'
                 }, {
-                    text: 'Library',
+                    text: '商品列表',
                     active: true
                 }],
                 goodsList: [],
@@ -97,7 +97,7 @@
             async getGoodsList(){
                 let self=this;
                 let result=await self.$http.get('api/be/goods/index?page='+self.currentPage+'&size='+self.size+'&name='+self.goodsName+'  ')
-                console.log(result)
+                //console.log(result)
                 if(result.errno==0){
                     self.count=result.data.count;
                     self.goodsList=result.data.data;

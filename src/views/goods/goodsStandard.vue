@@ -5,22 +5,31 @@
                 <b-form >
                     <b-row>
                         <b-col sm="1"><label>商品规格</label></b-col>
-                        <b-col col-sm-12>
+                        <b-col sm="11">
                             <b-row class="struct">
                                 <table>
                                     <tr><td><label >颜色</label></td></tr>
                                     <tr>
                                         <td>
-                                            <div class="sku-color">
-                                                <b-row v-for="item in skuData" :key="item.index">
+                                            <div class="sku-color">                       
+                                                <b-row v-for="(item,index) in skuData1" :key="index">
                                                     <b-input-group>
                                                         <b-input-group-prepend is-text>
-                                                            <input type="checkbox" v-model="item.checked" @click="select(item)">
+                                                            <input type="checkbox" :checked="item.checked" @change="addSpe1(item,1)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text" v-model="item.skuTypeVal1" placeholder="请输入颜色"></b-form-input>
-                                                        <b-form-input type="text" v-model="item.skuTypeVal2" placeholder="请输入图片地址"></b-form-input>
+                                                        <b-form-input type="text" v-model="item.name" :data-id="'sku'+ index" placeholder="请输入颜色" ></b-form-input>
+                                                        <b-form-input type="text" v-model="item.remark" placeholder="请输入图片地址"></b-form-input>
                                                     </b-input-group>
-                                                </b-row>                                             
+                                                </b-row>
+                                                <b-row >
+                                                    <b-input-group>
+                                                        <b-input-group-prepend is-text>
+                                                            <input type="checkbox" v-model="skuItem1.checked" @change="addSpe(1)"  >
+                                                        </b-input-group-prepend>
+                                                        <b-form-input type="text" v-model="skuItem1.name"  placeholder="请输入颜色" ></b-form-input>
+                                                        <b-form-input type="text" v-model="skuItem1.remark"  placeholder="请输入图片地址"></b-form-input>
+                                                    </b-input-group>
+                                                </b-row>                                         
                                             </div>
                                         </td>
                                     </tr>
@@ -32,40 +41,41 @@
                                     <tr>
                                         <td>
                                             <div class="sku-size">
-                                                <b-input-group>
+                                                <b-row v-for="item in skuData2" :key="item.index">
+                                                    <b-input-group>
                                                         <b-input-group-prepend is-text>
-                                                            <input type="checkbox" aria-label="Checkbox for following text input">
+                                                            <input type="checkbox" :checked="item.checked" @change="addSpe1(item,2)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text" placeholder="请输入自定义尺寸"></b-form-input>                                                      
-                                                </b-input-group>
-                                                <b-input-group>
+                                                        <b-form-input type="text"  v-model="item.name" placeholder="请输入自定义尺寸"></b-form-input>                                                      
+                                                    </b-input-group>
+                                                </b-row>
+                                                <b-row>
+                                                    <b-input-group>
                                                         <b-input-group-prepend is-text>
-                                                            <input type="checkbox" aria-label="Checkbox for following text input">
+                                                            <input type="checkbox" v-model="skuItem2.checked" @change="addSpe(2)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text" placeholder="请输入自定义尺寸"></b-form-input>                                                      
-                                                </b-input-group>
+                                                        <b-form-input type="text"  v-model="skuItem2.name" placeholder="请输入自定义尺寸"></b-form-input>                                                      
+                                                    </b-input-group>
+                                                </b-row>
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
                             </b-row>
-                            <b-row class="struct">
-                                <table>
-                                    <tr><td><label >商品销售规格</label></td></tr>
-                                    <tr>
-                                        <td>
-                                            <div class="sku-table col-lg-12">
-                                                <table striped hover border>
-                                                    <tr>
-                                                        <td>颜色分类</td>
-                                                        <td>尺码分类</td>
-                                                        <td>库存</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
+                            <b-row class="struct"> <b-button variant='primary lg' size="lg" style="margin:0 auto;" @click="getSkuData();">确定</b-button> </b-row>
+                            <b-row class="struct" v-if="goodsSkuList.length != 0">
+                                <div><label >商品销售规格</label></div>
+                                <b-table striped hover border  :items="goodsSkuList" :fields="fieldsSkuList">
+                                    <template slot="color" slot-scope="data">
+                                        {{data.item[0]}}
+                                    </template>
+                                    <template slot="size" slot-scope="data">
+                                        {{data.item[1]}}
+                                    </template>
+                                    <template slot="goods_number" slot-scope="data">
+                                        <b-form-input></b-form-input>
+                                    </template>
+                                </b-table>
                             </b-row>
                         </b-col>
                     </b-row>
@@ -86,18 +96,25 @@
         data : () => {
             return {
                 goodId:null,
-                skuData:[
-                    {
-                        checked:false,
-                        skuTypeVal1:null,
-                        skuTypeVal2:null
-                    }
-                ],
-                good_backup:{},
-                goodStandardForm: {
-                    
+                skuData1:[],
+                skuItem1:{
+                    name:null,
+                    remark:null,
+                    checked:false
                 },
-                a:'2'
+                skuData1NameArr:[],
+                skuData2:[],
+                skuItem2:{
+                    name:null,
+                    checked:false
+                },
+                skuData2NameArr:[],
+                goodsSkuList: [],
+                fieldsSkuList:{
+                    color:{label:'颜色',sortable:false},
+                    size:{label:'尺寸',sortable:false},
+                    goods_number:{label:'库存',sortable:false},
+                }
             }
         },
         async mounted () {
@@ -110,30 +127,66 @@
             async saveGood(){
                              
             },
-            select (item){
-                let self=this;
-                let index=self.skuData.indexOf(item)
-                console.log(index)
-                console.log(self.skuData[index].checked)
-               // console.log(this.skuData.indexOf(item))
-               
-                if(self.skuData[index].checked){
-                   
-                    //let i=self.skuData[index]
-                    console.log(index)
-                    self.skuData.splice(index,1)
-                }else{
-                     self.skuData.push({
+            addSpe(type){
+                let self=this;                    
+                if(type==1){
+                    self.skuData1.push(self.skuItem1);
+                    self.skuItem1={
                         checked:false,
-                        skuTypeVal1:null,
-                        skuTypeVal2:null
-                    })
-                    self.skuData[index].checked=!self.skuData[index].checked;
-                    //console.log(self.skuData)
-                    //console.log(self.skuData.checked)                    
+                        name:null,
+                        remark:null
+                    }
+                }else if(type==2){
+                    self.skuData2.push(self.skuItem2);
+                    self.skuItem2={
+                        checked:false,
+                        name:null
+                    }
                 }
-                console.log(self.skuData)
-                
+            },
+            addSpe1(item,type){
+                let self=this;
+                if(type==1){
+                    let index=self.skuData1.indexOf(item)
+                    if(item.checked){
+                        self.skuData1.splice(index,1)
+                    }
+                }else if(type==2){
+                    let index=self.skuData2.indexOf(item)
+                    if(item.checked){
+                        self.skuData2.splice(index,1)
+                    }
+                }
+            },
+            getSkuData (){
+                let self = this;
+                let tableArr=[];
+                let arr=[];
+                let skuData1NameArr=[];
+                let skuData2NameArr=[];
+                self.goodsSkuList=[];
+                for(let i=0;i<self.skuData1.length;i++){
+                    skuData1NameArr.push(self.skuData1[i].name)
+                }
+                for(let i=0;i<self.skuData2.length;i++){
+                    skuData2NameArr.push(self.skuData2[i].name)
+                }
+                if(skuData1NameArr.length == 0 ){
+                   skuData1NameArr = ['']
+                }
+                if(skuData2NameArr.length == 0 ){
+                    skuData2NameArr = ['']
+                }
+                for (var t = 0; t < skuData1NameArr.length; t++) {
+		            for (var i = 0; i < skuData2NameArr.length; i++) {
+		              arr = [];
+		              arr.push(skuData1NameArr[t]);
+		              arr.push(skuData2NameArr[i]);
+                      self.goodsSkuList.push(arr);
+                      //tableArr=[...self.goodsSkuList]
+		            }
+                }
+                console.log(skuData2NameArr.length)
             }
         }
     }
@@ -144,6 +197,7 @@
 .struct>table>tr>td{padding:2px 5px 10px;line-height: 24px;}
 .sku-color,.sku-size{margin:0 10px;padding:0 15px 10px 10px;}
 .sku-color .input-group>input,.sku-size .input-group>input{margin:0 10px;}
-.sku-size{display:flex;}
+.sku-size{display:flex;flex-flow: row wrap;}
 .sku-color>.row{margin-bottom: 10px;}
+.sku-size>.row{margin:10px;}
 </style>

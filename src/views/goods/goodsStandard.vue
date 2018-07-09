@@ -2,13 +2,13 @@
    <div class="content">
        <div class="container-fluid">
             <b-card>
-                <b-form >
+                <b-form @submit="saveGood">
                     <b-row>
                         <b-col sm="1"><label>商品规格</label></b-col>
-                        <b-col sm="11">
+                        <b-col sm="11" >
                             <b-row class="struct">
                                 <table>
-                                    <tr><td><label >颜色</label></td></tr>
+                                    <tr><td><label> {{skuLabelName1}} </label></td></tr>
                                     <tr>
                                         <td>
                                             <div class="sku-color">                       
@@ -17,7 +17,7 @@
                                                         <b-input-group-prepend is-text>
                                                             <input type="checkbox" :checked="item.checked" @change="addSpe1(item,1)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text" v-model="item.name" :data-id="'sku'+ index" placeholder="请输入颜色" ></b-form-input>
+                                                        <b-form-input type="text" v-model="item.name" placeholder="请输入颜色" ></b-form-input>
                                                         <b-form-input type="text" v-model="item.remark" placeholder="请输入图片地址"></b-form-input>
                                                     </b-input-group>
                                                 </b-row>
@@ -37,7 +37,7 @@
                             </b-row>
                             <b-row class="struct">
                                 <table>
-                                    <tr><td><label >尺寸</label></td></tr>
+                                    <tr><td><label > {{skuLabelName2}} </label></td></tr>
                                     <tr>
                                         <td>
                                             <div class="sku-size">
@@ -62,8 +62,8 @@
                                     </tr>
                                 </table>
                             </b-row>
-                            <b-row class="struct"> <b-button variant='primary lg' size="lg" style="margin:0 auto;" @click="getSkuData();">确定</b-button> </b-row>
-                            <b-row class="struct" v-if="goodsSkuList.length != 0">
+                            <b-row class="struct"> <b-button variant='primary' size="md" @click="getSkuData();">添加商品规格</b-button> </b-row>
+                            <b-row class="struct speTable" v-if="goodsSkuList.length != 0">
                                 <div><label >商品销售规格</label></div>
                                 <b-table striped hover border  :items="goodsSkuList" :fields="fieldsSkuList">
                                     <template slot="color" slot-scope="data">
@@ -73,13 +73,21 @@
                                         {{data.item[1]}}
                                     </template>
                                     <template slot="goods_number" slot-scope="data">
-                                        <b-form-input></b-form-input>
+                                        <b-form-input v-model="goodsSkuList.goods_number"></b-form-input>
                                     </template>
                                 </b-table>
+                                <div class="speBtn"> <b-button type="submit" variant="primary"> 保存 </b-button> </div>
                             </b-row>
                         </b-col>
                     </b-row>
                 </b-form>
+                <!-- 模态窗 -->
+                <b-modal ref="myModalRef" centered hide-footer>
+                    <div class="d-block text-center">
+                      <h3> {{addGoodMsg}} </h3>
+                    </div>
+                    <b-btn class="mt-3" variant="primary" block @click="hideModal">确认</b-btn>
+                </b-modal>
             </b-card>
        </div>
    </div>
@@ -91,7 +99,7 @@
     export default{
         name:'goodsStandard',
         components:{
-            //skuTypeOne
+
         },
         data : () => {
             return {
@@ -111,14 +119,76 @@
                 skuData2NameArr:[],
                 goodsSkuList: [],
                 fieldsSkuList:{
-                    color:{label:'颜色',sortable:false},
-                    size:{label:'尺寸',sortable:false},
-                    goods_number:{label:'库存',sortable:false},
-                }
+                    // color:{label:'颜色',sortable:false},
+                    // size:{label:'尺寸',sortable:false},
+                    // goods_number:{label:'库存',sortable:false},
+                },
+                skuLabelName1:'',
+                skuLabelName2:'',
+                goodsSkuGroup:{data:[]},
+                addGoodMsg:'',
+                addGoodFlag:false
             }
+
         },
         async mounted () {
-
+            let self = this;
+            //新增/修改--商品id
+            self.goodId=self.$route.params.id      
+            //console.log(self.goodId)     
+            //获取商品规格属性 be/product/list?goods_id=1181000
+            let result = await self.$http.get(`api/be/product/getSpecification?id=${self.goodId}`)
+            self.skuLabelName1=result.data[0].name
+            self.skuLabelName2=result.data[1].name
+            self.fieldsSkuList={
+                color:{label:self.skuLabelName1,sortable:false},
+                size:{label:self.skuLabelName2,sortable:false},
+                goods_number:{label:'库存',sortable:false},
+            }
+            let resultSpe = await self.$http.get(`api/be/product/list?goods_id=1181000`)
+            let specListArr=resultSpe.data.specificationList
+            let productList=resultSpe.data.productList
+            console.log(specListArr)
+            console.log(productList)
+            //商品规格
+            if(specListArr.length>0){
+                for(var i=0;i<specListArr.length;i++){
+                    //1--尺寸 2--颜色
+                    if(specListArr[i].specification_id==2){
+                        self.skuData1.push({
+                            name:specListArr[i].value,
+                            remark:specListArr[i].pic_url,
+                            checked:true,
+                            id:specListArr[i].id
+                        })
+                        console.log(self.skuData1)
+                    }else if(specListArr[i].specification_id==1){
+                        self.skuData2.push({
+                            name:specListArr[i].value,
+                            checked:true,
+                            id:specListArr[i].id,
+                        })
+                    }
+                }
+            } 
+            //商品规格table
+            // if(productList.length>0){
+            //     for(var i=0;i<productList.length;i++){
+            //         console.log(productList[0].goods_specification_ids)
+            //         if(specListArr[i].specification_id==2){
+            //             self.skuData1.push({
+            //                 name:specListArr[i].value,
+            //                 remark:specListArr[i].pic_url,
+            //                 checked:true
+            //             })
+            //         }else if(specListArr[i].specification_id==1){
+            //             self.skuData2.push({
+            //                 name:specListArr[i].value,
+            //                 checked:true
+            //             })
+            //         }
+            //     }
+            // }        
         },
         methods : {
             async getGoodInfo(){
@@ -158,35 +228,60 @@
                     }
                 }
             },
-            getSkuData (){
+            async getSkuData (){
                 let self = this;
-                let tableArr=[];
                 let arr=[];
                 let skuData1NameArr=[];
                 let skuData2NameArr=[];
+                self.goodsSkuGroup.data=[]
                 self.goodsSkuList=[];
+                //颜色数组
                 for(let i=0;i<self.skuData1.length;i++){
-                    skuData1NameArr.push(self.skuData1[i].name)
+                    if(self.skuData1[i].name){
+                        skuData1NameArr.push(self.skuData1[i].name);
+                        self.goodsSkuGroup.data.push({
+                            id:'',
+                            goods_id:self.goodId,
+                            specification_id:1,
+                            value:self.skuData1[i].name,
+                            pic_url:self.skuData1[i].remark
+                        })
+                    }
                 }
+                //尺寸数组
                 for(let i=0;i<self.skuData2.length;i++){
-                    skuData2NameArr.push(self.skuData2[i].name)
+                    if(self.skuData2[i].name){
+                        skuData2NameArr.push(self.skuData2[i].name)
+                        self.goodsSkuGroup.data.push({
+                            id:'',
+                            goods_id:self.goodId,
+                            specification_id:2,
+                            value:self.skuData2[i].name
+                        })
+                    }
                 }
-                if(skuData1NameArr.length == 0 ){
-                   skuData1NameArr = ['']
-                }
-                if(skuData2NameArr.length == 0 ){
-                    skuData2NameArr = ['']
-                }
+                //表格数据
                 for (var t = 0; t < skuData1NameArr.length; t++) {
 		            for (var i = 0; i < skuData2NameArr.length; i++) {
 		              arr = [];
 		              arr.push(skuData1NameArr[t]);
 		              arr.push(skuData2NameArr[i]);
                       self.goodsSkuList.push(arr);
-                      //tableArr=[...self.goodsSkuList]
 		            }
                 }
-                console.log(skuData2NameArr.length)
+                console.log(self.goodsSkuGroup)
+                return false;
+                let result = await self.$http.post(`api/be/product/storeSp`)
+                console.log(result)
+            },
+            showModal () {
+                this.$refs.myModalRef.show();
+            },
+            hideModal () {
+                this.$refs.myModalRef.hide();
+                if(this.addGoodFlag){
+                    this.$router.push('/goods/goodsList')
+                }
             }
         }
     }
@@ -200,4 +295,7 @@
 .sku-size{display:flex;flex-flow: row wrap;}
 .sku-color>.row{margin-bottom: 10px;}
 .sku-size>.row{margin:10px;}
+
+.struct button,.speBtn{margin:20px 50px;}
+.speTable{padding: 10px;}
 </style>

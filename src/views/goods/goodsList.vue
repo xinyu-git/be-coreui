@@ -97,7 +97,7 @@
             async getGoodsList(){
                 let self=this;
                 let result=await self.$http.get('api/be/goods/index?page='+self.currentPage+'&size='+self.size+'&name='+self.goodsName+'  ')
-                //console.log(result)
+                console.log(result)
                 if(result.errno==0){
                     self.count=result.data.count;
                     self.goodsList=result.data.data;

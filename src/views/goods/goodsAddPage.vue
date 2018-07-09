@@ -31,14 +31,9 @@
                             label-size="md" 
                             label="商品描述" 
                             label-class="text-sm-right"
-                            label-for="goodsDescInput">
-                        <b-form-textarea   id="goodsDescInput"
-                                        required
-                                        size="md" 
-                                        class="col-sm-6"
-                                        :rows="3"
-                                        v-model="goodForm.goods_desc"
-                                        placeholder="请输入商品描述"></b-form-textarea>
+                            label-for="goodsEditor">
+                            <markdown-editor required autoinit="autoinit" v-model="goodForm.goods_desc" ref="markdownEditor" 
+                                        id="goodsEditor" preview-class="markdown-body" ></markdown-editor>
                     </b-form-group>
                     <b-form-group id="goodsPicLabel" 
                             horizontal
@@ -62,11 +57,10 @@
                             label-class="text-sm-right"
                             label-for="goodsFocusPicInput">
                         <b-form-textarea   id="goodsFocusPicInput"
-                                        required
                                         size="md" 
                                         class="col-sm-6"
                                         :rows="3"
-                                        v-model="goodForm.grallerys_pic_url"
+                                        v-model="goodForm.gallerys"
                                         placeholder="请输入商品轮播图地址,多个图片以“,”分割">
                                     </b-form-textarea>    
                     </b-form-group>
@@ -100,21 +94,6 @@
                                         v-model="goodForm.integral"
                                         placeholder="请输入积分"></b-form-input>
                     </b-form-group>
-                    <b-form-group id="goodsVolumeLabel" 
-                            horizontal
-                            :label-cols="1"
-                            label-size="md" 
-                            label="商品库存" 
-                            label-class="text-sm-right"
-                            label-for="goodsVolumeInput">
-                        <b-form-input   id="goodsVolumeInput"
-                                        required
-                                        size="md" 
-                                        class="col-sm-2"
-                                        type="number"
-                                        v-model="goodForm.goods_number"
-                                        placeholder="请输入商品库存"></b-form-input>
-                    </b-form-group>
                     <b-form-group id="goodsTypeLabel" 
                             horizontal
                             :label-cols="1"
@@ -134,6 +113,29 @@
                             >
                          <c-switch class="mx-1" color="info" v-model="goodForm.is_on_sale" variant="3d" />
                     </b-form-group>
+                    <b-form-group id="goodsStandard" 
+                            horizontal
+                            :label-cols="1"
+                            label="添加规格" 
+                            label-class="text-sm-right"
+                            >
+                         <c-switch class="mx-1" color="info" v-model="goodForm.standard" variant="3d" />
+                    </b-form-group>
+                    <b-form-group id="goodsVolumeLabel" v-if="!goodForm.standard"
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品库存" 
+                            label-class="text-sm-right"
+                            label-for="goodsVolumeInput">
+                        <b-form-input   id="goodsVolumeInput"
+                                        required
+                                        size="md" 
+                                        class="col-sm-2"
+                                        type="number"
+                                        v-model="goodForm.goods_number"
+                                        placeholder="请输入商品库存"></b-form-input>
+                    </b-form-group>
                     <b-form-group id="goodsOrderLabel" 
                             horizontal
                             :label-cols="1"
@@ -148,9 +150,9 @@
                                         type="number"
                                         v-model="goodForm.sort_order"
                                         ></b-form-input>
-                    </b-form-group>
+                    </b-form-group>                   
                     <b-form-group horizontal :label-cols="1">
-                            <b-button type="submit" variant="primary">下一步</b-button>
+                            <b-button type="submit" variant="primary">{{goodForm.standard ? '下一步' : '保存'}}</b-button>
                             <b-button type="button" variant="danger" @click="onCancel">取消</b-button>
                     </b-form-group>
                 </b-form>
@@ -167,13 +169,22 @@
 </template>
 <script>
 import { Switch as cSwitch } from '@coreui/vue'
+import markdownEditor from 'vue-simplemde/src/markdown-editor'
     export default{
         name:'goodsAddPage',
         components:{
-            cSwitch
+            cSwitch,
+            markdownEditor
         },
         data : () => {
             return {
+                configs:{
+                    autofocus:true,
+                    autosave:{
+                        enabled:true,
+                        uniqueId:'goodsEditor'
+                    }                    
+                },
                 goodId:null,
                 items: [{
                     text: '首页',
@@ -185,19 +196,21 @@ import { Switch as cSwitch } from '@coreui/vue'
                     text: '添加商品',
                     active: true
                 }],
+                saveBtnMsg:'保存',
                 good_backup:{},
                 goodForm: {
                     name:'',
                     goods_desc:'',
                     list_pic_url:'',
-                    grallerys_pic_url:'',
+                    gallerys:'',
                     retail_price:'',
                     goods_number:'',
                     integral:'',
                     is_new:false,
                     is_hot:false,
                     is_on_sale:false,
-                    sort_order:100
+                    sort_order:100,
+                    standard:false
                 },
                 addGoodMsg:'',
                 addGoodFlag:false
@@ -205,31 +218,40 @@ import { Switch as cSwitch } from '@coreui/vue'
         },
         async mounted () {
            this.goodId=this.$route.params.id
+           //判断是新增/修改
            if(this.goodId!=-999){
                this.getGoodInfo();
            }
         },
         methods : {
             async getGoodInfo(){
+                //修改--获取商品Id,渲染数据
                 let self= this;
                 let result = await self.$http.get(`api/be/goods/info?id=${self.goodId}`)
                 self.goodForm = result.data;
+                //数据备份
                 self.good_backup={...result.data};
             },
             async saveGood(){
                 let self=this;
-                console.log(self.goodForm)
-                self.$router.push('/goods/goodsStandard/ ')
-                return false;
+                return false;  
                 let result=await self.$http.post('api/be/goods/store',self.goodForm)
-                // if(result.errno==0){
-                //     self.showModal ();
-                //     self.addGoodMsg='添加商品成功';
-                //     this.addGoodFlag=true;
-                // }else{
-                //     self.showModal ();
-                //     self.addGoodMsg='添加商品失败';
-                // }               
+                if(self.goodForm.standard){
+                    //有规格--获取商品id传入规格页面
+                    let goodId=result.data.id;
+                    console.log(goodId)
+                    self.$router.push({name:'goodsStandard',params:{id:goodId}})
+                }else{ 
+                    //无规格--直接保存商品                
+                    if(result.errno==0){
+                        self.showModal ();
+                        self.addGoodMsg='添加商品成功';
+                        this.addGoodFlag=true;
+                    }else{
+                        self.showModal ();
+                        self.addGoodMsg='添加商品失败';
+                    }
+                }                             
             },
             onCancel(){
                 let self=this;
@@ -248,10 +270,14 @@ import { Switch as cSwitch } from '@coreui/vue'
     }
 </script>
 <style lang="scss">
+@import 'simplemde/dist/simplemde.min.css';
+@import '~github-markdown-css';
 .content-nav{display:flex;background: #fff;margin-bottom: 1.5rem;padding:0 30px;}
 .content-nav .breadcrumb-box{flex: 1;color:#8492A6;}
 .content-nav .breadcrumb-box .breadcrumb{background: none;border:none;margin-bottom: 0;}
 .addGoods-btn{width: auto;display:flex;align-items: center;}
 .goodsTypeCheckbox{align-items: center;height: 100%;display: flex;}
-
+.markdown-editor .CodeMirror {
+  height: 200px;
+}
 </style>

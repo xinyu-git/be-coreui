@@ -11,11 +11,11 @@ module.exports = {
     assetsPublicPath: "/",
     proxyTable: {
       '/api':{
-          target: 'https://be.kong.net',
+          target: 'http://172.23.11.28/',
           changeOrigin: true
       },
       '/auth':{
-        target: 'https://be.kong.net',
+        target: 'http://172.23.11.28/',
         changeOrigin: true
       }
     },

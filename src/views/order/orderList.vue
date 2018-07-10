@@ -29,6 +29,9 @@
                             <template slot="add_time" slot-scope="time">
                                 {{time.value | formatTime}}
                             </template>
+                            <template slot="order_status_text" slot-scope="data">
+                                <!-- {{data}} -->
+                            </template>
                             <template slot="order_operation" slot-scope="data">
                                 <b-button variant='primary' @click="viewOrder(data.item.id)">查看</b-button>
                             </template>

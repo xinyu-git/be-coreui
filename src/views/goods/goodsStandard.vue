@@ -2,14 +2,14 @@
    <div class="content">
        <div class="container-fluid">
             <b-card>
-                <b-form @submit="saveGood">
+                <b-form @submit="saveGoodSku">
                     <b-row>
                         <b-col sm="1"><label>商品规格</label></b-col>
                         <b-col sm="11" >
-                            <b-row class="struct">
+                            <b-row class="struct" v-for="(item,index) in speData" :key="index">
                                 <table>
-                                    <tr><td><label> {{skuLabelName1}} </label></td></tr>
-                                    <tr>
+                                    <tr><td><label> {{item.name}} </label></td></tr>
+                                    <tr v-if="item.id==1">
                                         <td>
                                             <div class="sku-color">                       
                                                 <b-row v-for="(item,index) in skuData1" :key="index">
@@ -33,12 +33,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                </table>
-                            </b-row>
-                            <b-row class="struct">
-                                <table>
-                                    <tr><td><label > {{skuLabelName2}} </label></td></tr>
-                                    <tr>
+                                    <tr v-if="item.id==2">
                                         <td>
                                             <div class="sku-size">
                                                 <b-row v-for="item in skuData2" :key="item.index">
@@ -72,8 +67,14 @@
                                     <template slot="size" slot-scope="data">
                                         {{data.item[1]}}
                                     </template>
+                                    <template slot="retail_price" slot-scope="data">
+                                        <b-form-input v-model="data.item[2]"></b-form-input>
+                                    </template>
+                                    <template slot="integral" slot-scope="data">
+                                        <b-form-input v-model="data.item[3]"></b-form-input>
+                                    </template>
                                     <template slot="goods_number" slot-scope="data">
-                                        <b-form-input v-model="goodsSkuList.goods_number"></b-form-input>
+                                        <b-form-input v-model="data.item[4].goods_number"></b-form-input>
                                     </template>
                                 </b-table>
                                 <div class="speBtn"> <b-button type="submit" variant="primary"> 保存 </b-button> </div>
@@ -123,8 +124,7 @@
                     // size:{label:'尺寸',sortable:false},
                     // goods_number:{label:'库存',sortable:false},
                 },
-                skuLabelName1:'',
-                skuLabelName2:'',
+                speData:[],
                 goodsSkuGroup:{data:[]},
                 addGoodMsg:'',
                 addGoodFlag:false
@@ -134,71 +134,91 @@
         async mounted () {
             let self = this;
             //新增/修改--商品id
-            self.goodId=self.$route.params.id      
+            //self.goodId=self.$route.params.id      
+            self.goodId=1181068
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
-            let result = await self.$http.get(`api/be/product/getSpecification?id=${self.goodId}`)
-            self.skuLabelName1=result.data[0].name
-            self.skuLabelName2=result.data[1].name
-            self.fieldsSkuList={
-                color:{label:self.skuLabelName1,sortable:false},
-                size:{label:self.skuLabelName2,sortable:false},
-                goods_number:{label:'库存',sortable:false},
-            }
-            let resultSpe = await self.$http.get(`api/be/product/list?goods_id=1181000`)
-            let specListArr=resultSpe.data.specificationList
-            let productList=resultSpe.data.productList
-            console.log(specListArr)
-            console.log(productList)
-            //商品规格
-            if(specListArr.length>0){
-                for(var i=0;i<specListArr.length;i++){
-                    //1--尺寸 2--颜色
-                    if(specListArr[i].specification_id==2){
-                        self.skuData1.push({
-                            name:specListArr[i].value,
-                            remark:specListArr[i].pic_url,
-                            checked:true,
-                            id:specListArr[i].id
-                        })
-                        console.log(self.skuData1)
-                    }else if(specListArr[i].specification_id==1){
-                        self.skuData2.push({
-                            name:specListArr[i].value,
-                            checked:true,
-                            id:specListArr[i].id,
-                        })
-                    }
-                }
-            } 
-            //商品规格table
-            // if(productList.length>0){
-            //     for(var i=0;i<productList.length;i++){
-            //         console.log(productList[0].goods_specification_ids)
-            //         if(specListArr[i].specification_id==2){
-            //             self.skuData1.push({
-            //                 name:specListArr[i].value,
-            //                 remark:specListArr[i].pic_url,
-            //                 checked:true
-            //             })
-            //         }else if(specListArr[i].specification_id==1){
-            //             self.skuData2.push({
-            //                 name:specListArr[i].value,
-            //                 checked:true
-            //             })
-            //         }
-            //     }
-            // }        
+            self.getSpecification();        
         },
         methods : {
-            async getGoodInfo(){
-                
+            async getSpecification(){
+                let self = this;
+                let result = await self.$http.get(`api/be/product/getSpecification`)
+                //获取商品规格属性
+                self.speData=result.data
+                //生成表格的表头
+                let skuName1='';
+                let skuName2='';
+                for(let i=0;i<self.speData.length;i++){
+                    if(self.speData[i].id==1){
+                        skuName1=self.speData[i].name;
+                    }else if(self.speData[i].id==2){
+                        skuName2=self.speData[i].name;
+                    }
+                }
+                self.fieldsSkuList={
+                    color:{label:skuName1,sortable:false},
+                    size:{label:skuName2,sortable:false},                   
+                    retail_price:{label:'价格'},
+                    integral:{label:'积分'},
+                    goods_number:{label:'库存',sortable:false}
+                }
+                //根据商品id获取到规格 specListArr-商品规格  productList--规格表格
+                let resultSpe = await self.$http.get(`api/be/product/list?goods_id=${self.goodId}`)
+                let specListArr=resultSpe.data.specificationList
+                let productList=resultSpe.data.productList
+                //商品规格
+                if(specListArr.length>0){
+                    for(var i=0;i<specListArr.length;i++){
+                        //1--颜色 2--规格 
+                        if(specListArr[i].specification_id==1){
+                            self.skuData1.push({
+                                name:specListArr[i].value,
+                                remark:specListArr[i].pic_url,
+                                checked:true,
+                                id:specListArr[i].id
+                            })
+                            console.log(self.skuData1)
+                        }else if(specListArr[i].specification_id==2){
+                            self.skuData2.push({
+                                name:specListArr[i].value,
+                                checked:true,
+                                id:specListArr[i].id,
+                            })
+                        }
+                    }
+                } 
+                //self.goodsSkuList.push(['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id'])
+                //商品id--生成商品规格table--self.goodsSkuList
+                if(productList.length>0){
+                    //skuListTemp 临时存放表格每一项信息
+                    let skuListTemp=[];
+                    for(var i=0;i<productList.length;i++){
+                        let cuttId=productList[i].goods_specification_ids.split('_');
+                        for(var t=0;t<cuttId.length;t++){
+                            let spid = cuttId[t];                           
+                            for(var j=0;j<specListArr.length;j++){
+                                if(spid==specListArr[j].id){
+                                    skuListTemp.push(specListArr[j].value);
+                                }
+                            }
+                        }
+                        skuListTemp.push(productList[i].retail_price);
+                        skuListTemp.push(productList[i].integral);
+                        skuListTemp.push({goods_number:productList[i].goods_number});                     
+                        skuListTemp.push(productList[i].id);
+                        self.goodsSkuList.push(skuListTemp);
+                        skuListTemp = [];
+                    }
+                }
             },
-            async saveGood(){
-                             
+            async saveGoodSku(){
+                let self = this
+                //console.log(self.goodsSkuList)
             },
             addSpe(type){
-                let self=this;                    
+                let self=this;
+                //每输入勾选一条规格自动创建一条空输入区域   1--颜色 2--规格                    
                 if(type==1){
                     self.skuData1.push(self.skuItem1);
                     self.skuItem1={
@@ -216,6 +236,7 @@
             },
             addSpe1(item,type){
                 let self=this;
+                //点击已勾选项删除此项 1--颜色 2--规格
                 if(type==1){
                     let index=self.skuData1.indexOf(item)
                     if(item.checked){
@@ -230,9 +251,11 @@
             },
             async getSkuData (){
                 let self = this;
-                let arr=[];
+                // skuData1NameArr--存放skuData1的name skuData2NameArr--存放skuData2的name  goodsSkuTempArr--表格中每条信息tr
+                //self.goodsSkuGroup 每条sku的详情数组--返给后台生成id
                 let skuData1NameArr=[];
                 let skuData2NameArr=[];
+                let goodsSkuTempArr = [];
                 self.goodsSkuGroup.data=[]
                 self.goodsSkuList=[];
                 //颜色数组
@@ -260,19 +283,23 @@
                         })
                     }
                 }
-                //表格数据
-                for (var t = 0; t < skuData1NameArr.length; t++) {
-		            for (var i = 0; i < skuData2NameArr.length; i++) {
-		              arr = [];
-		              arr.push(skuData1NameArr[t]);
-		              arr.push(skuData2NameArr[i]);
-                      self.goodsSkuList.push(arr);
+                //skuData1NameArr--skuData2NameArr 生成表格数据
+                //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id']
+                for (let t = 0; t < skuData1NameArr.length; t++) {
+		            for (let i = 0; i < skuData2NameArr.length; i++) { 
+                      goodsSkuTempArr = [];                     
+		              goodsSkuTempArr.push(skuData1NameArr[t]);
+                      goodsSkuTempArr.push(skuData2NameArr[i]);
+                      goodsSkuTempArr.push('','')
+                      goodsSkuTempArr.push({goods_number:''})
+                      goodsSkuTempArr.push('')
+                      self.goodsSkuList.push(goodsSkuTempArr);
 		            }
                 }
                 console.log(self.goodsSkuGroup)
                 return false;
-                let result = await self.$http.post(`api/be/product/storeSp`)
-                console.log(result)
+                // let result = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup)
+                // console.log(result)
             },
             showModal () {
                 this.$refs.myModalRef.show();
@@ -294,7 +321,7 @@
 .sku-color .input-group>input,.sku-size .input-group>input{margin:0 10px;}
 .sku-size{display:flex;flex-flow: row wrap;}
 .sku-color>.row{margin-bottom: 10px;}
-.sku-size>.row{margin:10px;}
+.sku-size>.row{margin:10px 10px 10px 0;}
 
 .struct button,.speBtn{margin:20px 50px;}
 .speTable{padding: 10px;}

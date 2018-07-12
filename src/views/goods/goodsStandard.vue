@@ -19,6 +19,7 @@
                                                         </b-input-group-prepend>
                                                         <b-form-input type="text" v-model="item.name" placeholder="请输入颜色" ></b-form-input>
                                                         <b-form-input type="text" v-model="item.remark" placeholder="请输入图片地址"></b-form-input>
+                                                        <b-form-input type="text" v-model="item.id" hidden></b-form-input>
                                                     </b-input-group>
                                                 </b-row>
                                                 <b-row >
@@ -28,6 +29,7 @@
                                                         </b-input-group-prepend>
                                                         <b-form-input type="text" v-model="skuItem1.name"  placeholder="请输入颜色" ></b-form-input>
                                                         <b-form-input type="text" v-model="skuItem1.remark"  placeholder="请输入图片地址"></b-form-input>
+                                                        <b-form-input type="text" v-model="skuItem1.id" hidden></b-form-input>
                                                     </b-input-group>
                                                 </b-row>                                         
                                             </div>
@@ -41,7 +43,8 @@
                                                         <b-input-group-prepend is-text>
                                                             <input type="checkbox" :checked="item.checked" @change="addSpe1(item,2)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text"  v-model="item.name" placeholder="请输入自定义尺寸"></b-form-input>                                                      
+                                                        <b-form-input type="text"  v-model="item.name" placeholder="请输入自定义尺寸"></b-form-input>   
+                                                        <b-form-input type="text" v-model="item.id" hidden></b-form-input>                                          
                                                     </b-input-group>
                                                 </b-row>
                                                 <b-row>
@@ -49,7 +52,8 @@
                                                         <b-input-group-prepend is-text>
                                                             <input type="checkbox" v-model="skuItem2.checked" @change="addSpe(2)">
                                                         </b-input-group-prepend>
-                                                        <b-form-input type="text"  v-model="skuItem2.name" placeholder="请输入自定义尺寸"></b-form-input>                                                      
+                                                        <b-form-input type="text"  v-model="skuItem2.name" placeholder="请输入自定义尺寸"></b-form-input>  
+                                                        <b-form-input type="text" v-model="skuItem2.id" hidden></b-form-input>                                                
                                                     </b-input-group>
                                                 </b-row>
                                             </div>
@@ -74,7 +78,16 @@
                                         <b-form-input v-model="data.item[3]"></b-form-input>
                                     </template>
                                     <template slot="goods_number" slot-scope="data">
-                                        <b-form-input v-model="data.item[4].goods_number"></b-form-input>
+                                        <b-form-input v-model="data.item[4]"></b-form-input>
+                                    </template>
+                                    <template slot="id" slot-scope="data">                                     
+                                        <b-form-input v-model="data.item[5]"></b-form-input>
+                                    </template>
+                                    <template slot="colorId" slot-scope="data">                                     
+                                        <b-form-input v-model="data.item[6]"></b-form-input>
+                                    </template>
+                                    <template slot="sizeId" slot-scope="data">                                     
+                                        <b-form-input v-model="data.item[7]"></b-form-input>
                                     </template>
                                 </b-table>
                                 <div class="speBtn"> <b-button type="submit" variant="primary"> 保存 </b-button> </div>
@@ -107,15 +120,17 @@
                 goodId:null,
                 skuData1:[],
                 skuItem1:{
-                    name:null,
-                    remark:null,
-                    checked:false
+                    name:'',
+                    remark:'',
+                    checked:false,
+                    id:''
                 },
                 skuData1NameArr:[],
                 skuData2:[],
                 skuItem2:{
-                    name:null,
-                    checked:false
+                    name:'',
+                    checked:false,
+                    id:''
                 },
                 skuData2NameArr:[],
                 goodsSkuList: [],
@@ -126,8 +141,11 @@
                 },
                 speData:[],
                 goodsSkuGroup:{data:[]},
+                goodsSkuTable:{data:[]},
                 addGoodMsg:'',
-                addGoodFlag:false
+                addGoodFlag:false,
+                spdelete : []
+
             }
 
         },
@@ -135,12 +153,14 @@
             let self = this;
             //新增/修改--商品id
             //self.goodId=self.$route.params.id      
-            self.goodId=1181068
+            self.goodId=1181070
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
+            console.log(self.goodsSkuList)
         },
         methods : {
+            //商品规格-- 通过商品id查到已设置的规格项
             async getSpecification(){
                 let self = this;
                 let result = await self.$http.get(`api/be/product/getSpecification`)
@@ -161,7 +181,10 @@
                     size:{label:skuName2,sortable:false},                   
                     retail_price:{label:'价格'},
                     integral:{label:'积分'},
-                    goods_number:{label:'库存',sortable:false}
+                    goods_number:{label:'库存',sortable:false},
+                    id:{lable:'ID'},
+                    colorId:{lable:'颜色ID'},
+                    sizeId:{lable:'尺寸ID'}
                 }
                 //根据商品id获取到规格 specListArr-商品规格  productList--规格表格
                 let resultSpe = await self.$http.get(`api/be/product/list?goods_id=${self.goodId}`)
@@ -178,12 +201,11 @@
                                 checked:true,
                                 id:specListArr[i].id
                             })
-                            console.log(self.skuData1)
                         }else if(specListArr[i].specification_id==2){
                             self.skuData2.push({
                                 name:specListArr[i].value,
                                 checked:true,
-                                id:specListArr[i].id,
+                                id:specListArr[i].id
                             })
                         }
                     }
@@ -193,9 +215,9 @@
                 if(productList.length>0){
                     //skuListTemp 临时存放表格每一项信息
                     let skuListTemp=[];
-                    for(var i=0;i<productList.length;i++){
+                    for(let i=0;i<productList.length;i++){
                         let cuttId=productList[i].goods_specification_ids.split('_');
-                        for(var t=0;t<cuttId.length;t++){
+                        for(let t=0;t<cuttId.length;t++){
                             let spid = cuttId[t];                           
                             for(var j=0;j<specListArr.length;j++){
                                 if(spid==specListArr[j].id){
@@ -207,14 +229,36 @@
                         skuListTemp.push(productList[i].integral);
                         skuListTemp.push({goods_number:productList[i].goods_number});                     
                         skuListTemp.push(productList[i].id);
-                        self.goodsSkuList.push(skuListTemp);
+                        self.goodsSkuList.push(skuListTemp);                   
                         skuListTemp = [];
                     }
                 }
             },
             async saveGoodSku(){
                 let self = this
-                //console.log(self.goodsSkuList)
+                //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
+                self.goodsSkuTable.data=[]; 
+                console.log(self.goodsSkuList)
+                for(let i=0;i<self.goodsSkuList.length;i++){
+                    self.goodsSkuTable.data.push({
+                        id:self.goodsSkuList[i][2].id,
+                        goods_id:self.goodId,
+                        goods_specification_ids:self.goodsSkuList[i][2].goods_specification_ids,
+                        goods_number:self.goodsSkuList[i][2].goods_number,
+                        retail_price:self.goodsSkuList[i][2].retail_price,
+                        integral:self.goodsSkuList[i][2].integral
+                    })
+                }
+                console.log(self.goodsSkuTable)
+                //return false;
+                let resultSku = await self.$http.post(`api/be/product/storeProduct`,self.goodsSkuTable)
+                console.log(resultSku)
+                if(resultSku.data.length>0){
+                    for(let i=0;i<resultSku.data.length;i++){
+                        self.goodsSkuList[i][2].id=resultSku.data[i].id;                  
+                    }
+                }               
+                 console.log(self.goodsSkuTable)
             },
             addSpe(type){
                 let self=this;
@@ -223,14 +267,16 @@
                     self.skuData1.push(self.skuItem1);
                     self.skuItem1={
                         checked:false,
-                        name:null,
-                        remark:null
+                        name:'',
+                        remark:'',
+                        id:''
                     }
                 }else if(type==2){
                     self.skuData2.push(self.skuItem2);
                     self.skuItem2={
                         checked:false,
-                        name:null
+                        name:'',
+                        id:''
                     }
                 }
             },
@@ -241,11 +287,15 @@
                     let index=self.skuData1.indexOf(item)
                     if(item.checked){
                         self.skuData1.splice(index,1)
+                        //self.spdelete 删除的规格id
+                        self.spdelete.push(item.id)
                     }
                 }else if(type==2){
                     let index=self.skuData2.indexOf(item)
                     if(item.checked){
                         self.skuData2.splice(index,1)
+                        //self.spdelete 删除的规格id
+                        self.spdelete.push(item.id)
                     }
                 }
             },
@@ -255,15 +305,19 @@
                 //self.goodsSkuGroup 每条sku的详情数组--返给后台生成id
                 let skuData1NameArr=[];
                 let skuData2NameArr=[];
+                let skuData1Id=[];
+                let skuData2Id=[];
                 let goodsSkuTempArr = [];
-                self.goodsSkuGroup.data=[]
+                self.goodsSkuGroup.data=[];
                 self.goodsSkuList=[];
-                //颜色数组
+
+                //颜色数组                                
                 for(let i=0;i<self.skuData1.length;i++){
                     if(self.skuData1[i].name){
-                        skuData1NameArr.push(self.skuData1[i].name);
+                        skuData1NameArr.push(self.skuData1[i].name)
+                        console.log(skuData1NameArr)
                         self.goodsSkuGroup.data.push({
-                            id:'',
+                            id:self.skuData1[i].id,
                             goods_id:self.goodId,
                             specification_id:1,
                             value:self.skuData1[i].name,
@@ -274,32 +328,61 @@
                 //尺寸数组
                 for(let i=0;i<self.skuData2.length;i++){
                     if(self.skuData2[i].name){
-                        skuData2NameArr.push(self.skuData2[i].name)
+                        skuData2NameArr.push(self.skuData2[i].name);
                         self.goodsSkuGroup.data.push({
-                            id:'',
+                            id:self.skuData2[i].id,
                             goods_id:self.goodId,
                             specification_id:2,
                             value:self.skuData2[i].name
                         })
                     }
                 }
+
+
                 //skuData1NameArr--skuData2NameArr 生成表格数据
-                //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id']
+                //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
                 for (let t = 0; t < skuData1NameArr.length; t++) {
 		            for (let i = 0; i < skuData2NameArr.length; i++) { 
-                      goodsSkuTempArr = [];                     
+                      goodsSkuTempArr = [];   
 		              goodsSkuTempArr.push(skuData1NameArr[t]);
                       goodsSkuTempArr.push(skuData2NameArr[i]);
-                      goodsSkuTempArr.push('','')
-                      goodsSkuTempArr.push({goods_number:''})
                       goodsSkuTempArr.push('')
-                      self.goodsSkuList.push(goodsSkuTempArr);
+                      goodsSkuTempArr.push('')
+                      goodsSkuTempArr.push('')
+                      goodsSkuTempArr.push('')
+                      goodsSkuTempArr.push('')
+                      goodsSkuTempArr.push('')
+                       // goodsSkuTempArr.push(skuData1NameArr[t].name);
+                        //goodsSkuTempArr.push(skuData2NameArr[i].name);
+                        //goodsSkuTempArr.push({retail_price:'',integral:'',goods_number:'',goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id,id:''});
+                        // goodsSkuTempArr.push({retail_price:''});
+                        // goodsSkuTempArr.push({integral:''});
+                        // goodsSkuTempArr.push({goods_number:''});
+                        // goodsSkuTempArr.push({goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id});
+                        // goodsSkuTempArr.push({id:''});
+                        self.goodsSkuList.push(goodsSkuTempArr);
 		            }
                 }
-                console.log(self.goodsSkuGroup)
+                console.log(self.goodsSkuList)
                 return false;
-                // let result = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup)
-                // console.log(result)
+                self.goodsSkuGroup.spdelete = self.spdelete;
+                let resultStore = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup);             
+                if(resultStore.data.length>0){
+                    let temp1 = 0;
+                    let temp2 = 0;
+                    for(var i=0;i<resultStore.data.length;i++){
+                        //1--颜色 2--规格 
+                        if(resultStore.data[i].specification_id==1){
+                            self.skuData1[temp1].id=resultStore.data[i].id;
+                            temp1++;
+                        }
+                        if(resultStore.data[i].specification_id==2){
+                            self.skuData2[temp2].id=resultStore.data[i].id;
+                            temp2++;
+                        }
+                    }
+                }
+                console.log(self.goodsSkuList)
             },
             showModal () {
                 this.$refs.myModalRef.show();
@@ -325,4 +408,5 @@
 
 .struct button,.speBtn{margin:20px 50px;}
 .speTable{padding: 10px;}
+
 </style>

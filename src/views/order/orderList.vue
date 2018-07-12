@@ -27,6 +27,7 @@
                     <b-col lg="12">
                         <b-table  striped hover border :items="orderData" :fields="fieldsOrder">
                             <template slot="add_time" slot-scope="time">
+                                {{time}}
                                 {{time.item.add_time}}
                             </template>
                             <template slot="order_status_text" slot-scope="data">

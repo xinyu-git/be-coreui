@@ -26,12 +26,11 @@
                 <b-row class="container-box">
                     <b-col lg="12">
                         <b-table  striped hover border :items="orderData" :fields="fieldsOrder">
-                            <template slot="add_time" slot-scope="time">
-                                {{time}}
-                                {{time.item.add_time}}
+                            <template slot="add_time" slot-scope="time">                             
+                                {{time.value}}
                             </template>
                             <template slot="order_status_text" slot-scope="data">
-                                {{data.item.order_status_text}}
+                                {{data.value}}
                             </template>
                             <template slot="order_operation" slot-scope="data">
                                 <b-button variant='primary' @click="viewOrder(data.item.id)">查看</b-button>

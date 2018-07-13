@@ -156,7 +156,7 @@
             let self = this;
             //新增/修改--商品id
             //self.goodId=self.$route.params.id      
-            self.goodId=1181080
+            self.goodId=1181082
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
@@ -339,7 +339,6 @@
                // console.log(skuData1NameArr)
                // console.log(skuData2NameArr)
                 console.log(self.goodsSkuList)
-
                 //skuData1NameArr--skuData2NameArr 生成表格数据
                 //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
                 for (let t = 0; t < self.skuData1.length; t++) {
@@ -390,8 +389,7 @@
                 console.log(resultSku)
                 if(resultSku.data.length>0){
                     for(let i=0;i<resultSku.data.length;i++){
-                         self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id; 
-                                      
+                         self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id;             
                     }
                 }       
                 console.log(self.goodsSkuList) 

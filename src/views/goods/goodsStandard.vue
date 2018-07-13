@@ -66,28 +66,31 @@
                                 <div><label >商品销售规格</label></div>
                                 <b-table striped hover border  :items="goodsSkuList" :fields="fieldsSkuList">
                                     <template slot="color" slot-scope="data">
-                                        {{data.item[0]}}
+                                        {{data.item[0].name}}
                                     </template>
                                     <template slot="size" slot-scope="data">
-                                        {{data.item[1]}}
+                                        {{data.item[1].name}}
                                     </template>
                                     <template slot="retail_price" slot-scope="data">
-                                        <b-form-input v-model="data.item[2]"></b-form-input>
+                                        <b-form-input v-model="data.item[2].retail_price"></b-form-input>
                                     </template>
                                     <template slot="integral" slot-scope="data">
-                                        <b-form-input v-model="data.item[3]"></b-form-input>
+                                        <b-form-input v-model="data.item[2].integral"></b-form-input>
                                     </template>
                                     <template slot="goods_number" slot-scope="data">
-                                        <b-form-input v-model="data.item[4]"></b-form-input>
+                                        <b-form-input v-model="data.item[2].goods_number"></b-form-input>
                                     </template>
                                     <template slot="id" slot-scope="data">                                     
-                                        <b-form-input v-model="data.item[5]"></b-form-input>
+                                        <b-form-input v-model="data.item[2].id"></b-form-input>
                                     </template>
                                     <template slot="colorId" slot-scope="data">                                     
-                                        <b-form-input v-model="data.item[6]"></b-form-input>
+                                        <b-form-input v-model="data.item[0].id"></b-form-input>
                                     </template>
                                     <template slot="sizeId" slot-scope="data">                                     
-                                        <b-form-input v-model="data.item[7]"></b-form-input>
+                                        <b-form-input v-model="data.item[1].id"></b-form-input>
+                                    </template>
+                                    <template slot="goods_specification_ids"  slot-scope="data">
+                                         <b-form-input v-model="data.item[2].goods_specification_ids"></b-form-input>
                                     </template>
                                 </b-table>
                                 <div class="speBtn"> <b-button type="submit" variant="primary"> 保存 </b-button> </div>
@@ -125,14 +128,14 @@
                     checked:false,
                     id:''
                 },
-                skuData1NameArr:[],
+               // skuData1NameArr:[],
                 skuData2:[],
                 skuItem2:{
                     name:'',
                     checked:false,
                     id:''
                 },
-                skuData2NameArr:[],
+                //skuData2NameArr:[],
                 goodsSkuList: [],
                 fieldsSkuList:{
                     // color:{label:'颜色',sortable:false},
@@ -153,11 +156,10 @@
             let self = this;
             //新增/修改--商品id
             //self.goodId=self.$route.params.id      
-            self.goodId=1181070
+            self.goodId=1181080
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
-            console.log(self.goodsSkuList)
         },
         methods : {
             //商品规格-- 通过商品id查到已设置的规格项
@@ -184,13 +186,15 @@
                     goods_number:{label:'库存',sortable:false},
                     id:{lable:'ID'},
                     colorId:{lable:'颜色ID'},
-                    sizeId:{lable:'尺寸ID'}
+                    sizeId:{lable:'尺寸ID'},
+                    goods_specification_ids:{lable:'id组合'}
                 }
                 //根据商品id获取到规格 specListArr-商品规格  productList--规格表格
                 let resultSpe = await self.$http.get(`api/be/product/list?goods_id=${self.goodId}`)
                 let specListArr=resultSpe.data.specificationList
                 let productList=resultSpe.data.productList
                 //商品规格
+                console.log(specListArr)
                 if(specListArr.length>0){
                     for(var i=0;i<specListArr.length;i++){
                         //1--颜色 2--规格 
@@ -212,6 +216,9 @@
                 } 
                 //self.goodsSkuList.push(['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id'])
                 //商品id--生成商品规格table--self.goodsSkuList
+                console.log(self.goodsSkuList)              
+                console.log(productList)
+                console.log(self.goodsSkuList)
                 if(productList.length>0){
                     //skuListTemp 临时存放表格每一项信息
                     let skuListTemp=[];
@@ -221,44 +228,15 @@
                             let spid = cuttId[t];                           
                             for(var j=0;j<specListArr.length;j++){
                                 if(spid==specListArr[j].id){
-                                    skuListTemp.push(specListArr[j].value);
+                                    skuListTemp.push({name:specListArr[j].value,id:specListArr[j].id});
                                 }
                             }
                         }
-                        skuListTemp.push(productList[i].retail_price);
-                        skuListTemp.push(productList[i].integral);
-                        skuListTemp.push({goods_number:productList[i].goods_number});                     
-                        skuListTemp.push(productList[i].id);
+                        skuListTemp.push({retail_price:productList[i].retail_price,integral:productList[i].integral,goods_number:productList[i].goods_number,id:productList[i].id,goods_specification_ids:productList[i].goods_specification_ids});    
                         self.goodsSkuList.push(skuListTemp);                   
                         skuListTemp = [];
                     }
                 }
-            },
-            async saveGoodSku(){
-                let self = this
-                //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
-                self.goodsSkuTable.data=[]; 
-                console.log(self.goodsSkuList)
-                for(let i=0;i<self.goodsSkuList.length;i++){
-                    self.goodsSkuTable.data.push({
-                        id:self.goodsSkuList[i][2].id,
-                        goods_id:self.goodId,
-                        goods_specification_ids:self.goodsSkuList[i][2].goods_specification_ids,
-                        goods_number:self.goodsSkuList[i][2].goods_number,
-                        retail_price:self.goodsSkuList[i][2].retail_price,
-                        integral:self.goodsSkuList[i][2].integral
-                    })
-                }
-                console.log(self.goodsSkuTable)
-                //return false;
-                let resultSku = await self.$http.post(`api/be/product/storeProduct`,self.goodsSkuTable)
-                console.log(resultSku)
-                if(resultSku.data.length>0){
-                    for(let i=0;i<resultSku.data.length;i++){
-                        self.goodsSkuList[i][2].id=resultSku.data[i].id;                  
-                    }
-                }               
-                 console.log(self.goodsSkuTable)
             },
             addSpe(type){
                 let self=this;
@@ -305,8 +283,6 @@
                 //self.goodsSkuGroup 每条sku的详情数组--返给后台生成id
                 let skuData1NameArr=[];
                 let skuData2NameArr=[];
-                let skuData1Id=[];
-                let skuData2Id=[];
                 let goodsSkuTempArr = [];
                 self.goodsSkuGroup.data=[];
                 self.goodsSkuList=[];
@@ -314,8 +290,7 @@
                 //颜色数组                                
                 for(let i=0;i<self.skuData1.length;i++){
                     if(self.skuData1[i].name){
-                        skuData1NameArr.push(self.skuData1[i].name)
-                        console.log(skuData1NameArr)
+                        skuData1NameArr.push({name:self.skuData1[i].name,id:self.skuData1[i].id})
                         self.goodsSkuGroup.data.push({
                             id:self.skuData1[i].id,
                             goods_id:self.goodId,
@@ -328,7 +303,7 @@
                 //尺寸数组
                 for(let i=0;i<self.skuData2.length;i++){
                     if(self.skuData2[i].name){
-                        skuData2NameArr.push(self.skuData2[i].name);
+                        skuData2NameArr.push({name:self.skuData2[i].name,id:self.skuData2[i].id});
                         self.goodsSkuGroup.data.push({
                             id:self.skuData2[i].id,
                             goods_id:self.goodId,
@@ -338,51 +313,89 @@
                     }
                 }
 
-
-                //skuData1NameArr--skuData2NameArr 生成表格数据
-                //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
-                for (let t = 0; t < skuData1NameArr.length; t++) {
-		            for (let i = 0; i < skuData2NameArr.length; i++) { 
-                      goodsSkuTempArr = [];   
-		              goodsSkuTempArr.push(skuData1NameArr[t]);
-                      goodsSkuTempArr.push(skuData2NameArr[i]);
-                      goodsSkuTempArr.push('')
-                      goodsSkuTempArr.push('')
-                      goodsSkuTempArr.push('')
-                      goodsSkuTempArr.push('')
-                      goodsSkuTempArr.push('')
-                      goodsSkuTempArr.push('')
-                       // goodsSkuTempArr.push(skuData1NameArr[t].name);
-                        //goodsSkuTempArr.push(skuData2NameArr[i].name);
-                        //goodsSkuTempArr.push({retail_price:'',integral:'',goods_number:'',goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id,id:''});
-                        // goodsSkuTempArr.push({retail_price:''});
-                        // goodsSkuTempArr.push({integral:''});
-                        // goodsSkuTempArr.push({goods_number:''});
-                        // goodsSkuTempArr.push({goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id});
-                        // goodsSkuTempArr.push({id:''});
-                        self.goodsSkuList.push(goodsSkuTempArr);
-		            }
-                }
-                console.log(self.goodsSkuList)
-                return false;
+                //return false;
                 self.goodsSkuGroup.spdelete = self.spdelete;
-                let resultStore = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup);             
+                let resultStore = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup);  
+                console.log(resultStore)           
                 if(resultStore.data.length>0){
                     let temp1 = 0;
                     let temp2 = 0;
                     for(var i=0;i<resultStore.data.length;i++){
                         //1--颜色 2--规格 
                         if(resultStore.data[i].specification_id==1){
-                            self.skuData1[temp1].id=resultStore.data[i].id;
+                            self.skuData1[temp1].id=skuData1NameArr[temp1].id=resultStore.data[i].id;
+                            //skuData1NameArr[temp1].id=resultStore.data[i].id;
                             temp1++;
                         }
                         if(resultStore.data[i].specification_id==2){
-                            self.skuData2[temp2].id=resultStore.data[i].id;
+                            self.skuData2[temp2].id=skuData2NameArr[temp2].id=resultStore.data[i].id;
+                            //skuData2NameArr[temp2].id=resultStore.data[i].id;
                             temp2++;
                         }
                     }
                 }
+                console.log(self.skuData1)
+                console.log(self.skuData2)
+               // console.log(skuData1NameArr)
+               // console.log(skuData2NameArr)
                 console.log(self.goodsSkuList)
+
+                //skuData1NameArr--skuData2NameArr 生成表格数据
+                //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
+                for (let t = 0; t < self.skuData1.length; t++) {
+		            for (let i = 0; i < self.skuData2.length; i++) { 
+                      goodsSkuTempArr = [];   
+		              goodsSkuTempArr.push({name:skuData1NameArr[t].name,id:skuData1NameArr[t].id});
+                      goodsSkuTempArr.push({name:skuData2NameArr[i].name,id:skuData2NameArr[i].id});
+                    //   goodsSkuTempArr.push('')
+                    //   goodsSkuTempArr.push('')
+                    //   goodsSkuTempArr.push('')
+                    //   goodsSkuTempArr.push('')
+                    //   goodsSkuTempArr.push('')
+                    //   goodsSkuTempArr.push('')
+                       // goodsSkuTempArr.push(skuData1NameArr[t].name);
+                        //goodsSkuTempArr.push(skuData2NameArr[i].name);
+                        goodsSkuTempArr.push({retail_price:'',integral:'',goods_number:'',goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id,id:''});
+                        //goodsSkuTempArr.push({id:''});
+                        // goodsSkuTempArr.push({retail_price:''});
+                        // goodsSkuTempArr.push({integral:''});
+                        // goodsSkuTempArr.push({goods_number:''});
+                        // goodsSkuTempArr.push({goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id});
+                       console.log(goodsSkuTempArr)
+                        self.goodsSkuList.push(goodsSkuTempArr);
+		            }
+                }
+                console.log(self.goodsSkuList)
+                
+            },
+            async saveGoodSku(){
+                let self = this
+                //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
+                self.goodsSkuTable.data=[]; 
+                
+                console.log(self.goodsSkuList)
+                for(let i=0;i<self.goodsSkuList.length;i++){
+                    self.goodsSkuTable.data.push({
+                        id:self.goodsSkuList[i][2].id,
+                        goods_id:self.goodId,
+                        goods_specification_ids:self.goodsSkuList[i][2].goods_specification_ids,
+                        goods_number:self.goodsSkuList[i][2].goods_number,
+                        retail_price:self.goodsSkuList[i][2].retail_price,
+                        integral:self.goodsSkuList[i][2].integral
+                    })
+                }
+                console.log(self.goodsSkuTable)
+                //return false;
+                let resultSku = await self.$http.post(`api/be/product/storeProduct`,self.goodsSkuTable)
+                console.log(resultSku)
+                if(resultSku.data.length>0){
+                    for(let i=0;i<resultSku.data.length;i++){
+                         self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id; 
+                                      
+                    }
+                }       
+                console.log(self.goodsSkuList) 
+                 console.log(self.goodsSkuTable)
             },
             showModal () {
                 this.$refs.myModalRef.show();

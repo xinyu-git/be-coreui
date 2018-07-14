@@ -147,7 +147,10 @@
                 goodsSkuTable:{data:[]},
                 addGoodMsg:'',
                 addGoodFlag:false,
-                spdelete : []
+                spdelete : [],
+                skuTempId:[],
+                skuTempId1:[]
+                
 
             }
 
@@ -156,7 +159,7 @@
             let self = this;
             //新增/修改--商品id
             //self.goodId=self.$route.params.id      
-            self.goodId=1181082
+            self.goodId=1181096
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
@@ -233,10 +236,14 @@
                             }
                         }
                         skuListTemp.push({retail_price:productList[i].retail_price,integral:productList[i].integral,goods_number:productList[i].goods_number,id:productList[i].id,goods_specification_ids:productList[i].goods_specification_ids});    
-                        self.goodsSkuList.push(skuListTemp);                   
+                        self.goodsSkuList.push(skuListTemp);                 
                         skuListTemp = [];
                     }
                 }
+                //深拷贝--页面初始加载--用于表格数据id赋值
+                self.skuTempId=[...self.goodsSkuList] 
+                console.log(self.skuTempId)
+                console.log(self.goodsSkuList)
             },
             addSpe(type){
                 let self=this;
@@ -279,7 +286,7 @@
             },
             async getSkuData (){
                 let self = this;
-                // skuData1NameArr--存放skuData1的name skuData2NameArr--存放skuData2的name  goodsSkuTempArr--表格中每条信息tr
+                // skuData1NameArr--存放skuData1的name/id skuData2NameArr--存放skuData2的name/id  goodsSkuTempArr--表格中每条信息tr
                 //self.goodsSkuGroup 每条sku的详情数组--返给后台生成id
                 let skuData1NameArr=[];
                 let skuData2NameArr=[];
@@ -336,42 +343,39 @@
                 }
                 console.log(self.skuData1)
                 console.log(self.skuData2)
-               // console.log(skuData1NameArr)
-               // console.log(skuData2NameArr)
+                console.log(skuData1NameArr)
+                console.log(skuData2NameArr)
                 console.log(self.goodsSkuList)
                 //skuData1NameArr--skuData2NameArr 生成表格数据
                 //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
-                for (let t = 0; t < self.skuData1.length; t++) {
-		            for (let i = 0; i < self.skuData2.length; i++) { 
-                      goodsSkuTempArr = [];   
-		              goodsSkuTempArr.push({name:skuData1NameArr[t].name,id:skuData1NameArr[t].id});
-                      goodsSkuTempArr.push({name:skuData2NameArr[i].name,id:skuData2NameArr[i].id});
-                    //   goodsSkuTempArr.push('')
-                    //   goodsSkuTempArr.push('')
-                    //   goodsSkuTempArr.push('')
-                    //   goodsSkuTempArr.push('')
-                    //   goodsSkuTempArr.push('')
-                    //   goodsSkuTempArr.push('')
-                       // goodsSkuTempArr.push(skuData1NameArr[t].name);
-                        //goodsSkuTempArr.push(skuData2NameArr[i].name);
+                for (let t = 0; t < skuData1NameArr.length; t++) {
+		            for (let i = 0; i < skuData2NameArr.length; i++) { 
+                        goodsSkuTempArr = [];   
+		                goodsSkuTempArr.push({name:skuData1NameArr[t].name,id:skuData1NameArr[t].id});
+                        goodsSkuTempArr.push({name:skuData2NameArr[i].name,id:skuData2NameArr[i].id});                       
                         goodsSkuTempArr.push({retail_price:'',integral:'',goods_number:'',goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id,id:''});
-                        //goodsSkuTempArr.push({id:''});
-                        // goodsSkuTempArr.push({retail_price:''});
-                        // goodsSkuTempArr.push({integral:''});
-                        // goodsSkuTempArr.push({goods_number:''});
-                        // goodsSkuTempArr.push({goods_specification_ids:skuData1NameArr[t].id+'_'+skuData2NameArr[i].id});
-                       console.log(goodsSkuTempArr)
                         self.goodsSkuList.push(goodsSkuTempArr);
 		            }
                 }
+
+                // skuTempId 0-3  goodsSkuList 0-5
+                //skuTempId深拷贝已保存的table数据。通过比较goods_specification_ids相等，赋值id
+                //self.goodsSkuList表格数据
+                for(let j=0;j<self.skuTempId.length;j++){
+                    for(let temp=0;temp<self.goodsSkuList.length;temp++){
+                        if(self.skuTempId[j][2].goods_specification_ids==self.goodsSkuList[temp][2].goods_specification_ids){
+                            self.goodsSkuList[temp][2].id=self.skuTempId[j][2].id                   
+                        }
+                    }                   
+                }
+                 console.log(self.goodsSkuList[0][2].id)
                 console.log(self.goodsSkuList)
                 
             },
             async saveGoodSku(){
                 let self = this
                 //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
-                self.goodsSkuTable.data=[]; 
-                
+                self.goodsSkuTable.data=[];                           
                 console.log(self.goodsSkuList)
                 for(let i=0;i<self.goodsSkuList.length;i++){
                     self.goodsSkuTable.data.push({
@@ -391,9 +395,12 @@
                     for(let i=0;i<resultSku.data.length;i++){
                          self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id;             
                     }
-                }       
+                } 
+                //深拷贝--保存提交--用于表格数据id赋值--
+                self.skuTempId=[...self.goodsSkuList]    
+                console.log(self.skuTempId)
                 console.log(self.goodsSkuList) 
-                 console.log(self.goodsSkuTable)
+                console.log(self.goodsSkuTable)               
             },
             showModal () {
                 this.$refs.myModalRef.show();

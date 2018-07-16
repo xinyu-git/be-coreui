@@ -62,8 +62,9 @@
                                         :rows="3"
                                         v-model="goodForm.gallerys"
                                         placeholder="请输入商品轮播图地址,多个图片以“,”分割">
-                                    </b-form-textarea>    
+                                    </b-form-textarea>                                      
                     </b-form-group>
+                     
                     <b-form-group id="goodsPriceLabel" 
                             horizontal
                             :label-cols="1"
@@ -101,8 +102,8 @@
                             label-class="text-sm-right"
                             >
                             <div class="goodsTypeCheckbox">
-                                <b-form-checkbox  v-model="goodForm.is_new">新品</b-form-checkbox>
-                                <b-form-checkbox  v-model="goodForm.is_hot">人气</b-form-checkbox>
+                                <b-form-checkbox  v-model="goodForm.is_new" value="1" unchecked-value="0">新品</b-form-checkbox>                            
+                                <b-form-checkbox  v-model="goodForm.is_hot" value="1" unchecked-value="0">人气</b-form-checkbox>
                             </div>
                     </b-form-group>
                     <b-form-group id="goodsOnSaleLabel" 
@@ -111,7 +112,7 @@
                             label="上架" 
                             label-class="text-sm-right"
                             >
-                         <c-switch class="mx-1" color="info" v-model="goodForm.is_on_sale" variant="3d" />
+                         <c-switch class="mx-1" color="info" v-model="goodForm.is_on_sale"  variant="3d" />
                     </b-form-group>
                     <b-form-group id="goodsStandard" 
                             horizontal
@@ -119,7 +120,7 @@
                             label="添加规格" 
                             label-class="text-sm-right"
                             >
-                         <c-switch class="mx-1" color="info" v-model="goodForm.standard" variant="3d" />
+                         <c-switch class="mx-1" color="info" v-model="goodForm.standard" variant="3d"  />
                     </b-form-group>
                     <b-form-group id="goodsVolumeLabel" v-if="!goodForm.standard"
                             horizontal
@@ -206,8 +207,8 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                     retail_price:'',
                     goods_number:'',
                     integral:'',
-                    is_new:false,
-                    is_hot:false,
+                    is_new:0,
+                    is_hot:0,
                     is_on_sale:false,
                     sort_order:100,
                     standard:false
@@ -217,11 +218,13 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
             }
         },
         async mounted () {
-           this.goodId=this.$route.params.id
+            let self=this
+           self.goodId=this.$route.params.id
            //判断是新增/修改
-           if(this.goodId!=-999){
-               this.getGoodInfo();
+           if(self.goodId!=-999){
+               self.getGoodInfo();
            }
+
         },
         methods : {
             async getGoodInfo(){
@@ -229,17 +232,31 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                 let self= this;
                 let result = await self.$http.get(`api/be/goods/info?id=${self.goodId}`)
                 self.goodForm = result.data;
+                console.log(self.goodForm)
+                console.log(self.goodForm.standard)
                 //数据备份
-                self.good_backup={...result.data};
+                self.good_backup={...result.data};   
+                //上架/规格--数字转布尔
+                if(self.goodForm.is_on_sale==1){
+                    self.goodForm.is_on_sale=true;
+                }else if(self.goodForm.is_on_sale==0){
+                    self.goodForm.is_on_sale=false
+                }
+                if(self.goodForm.standard==1){
+                    self.goodForm.standard=true;
+                }else if(self.goodForm.standard==0){
+                    self.goodForm.standard=false
+                }                             
             },
-            async saveGood(){
+            async saveGood(evt){
+                evt.preventDefault();
                 let self=this;
+                console.log(self.goodForm)
                 //return false;  
                 let result=await self.$http.post('api/be/goods/store',self.goodForm)
                 if(self.goodForm.standard){
                     //有规格--获取商品id传入规格页面
                     let goodId=result.data.id;
-                    console.log(goodId)
                     self.$router.push({name:'goodsStandard',params:{id:goodId}})
                 }else{ 
                     //无规格--直接保存商品                

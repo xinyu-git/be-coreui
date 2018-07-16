@@ -159,7 +159,7 @@
             let self = this;
             //新增/修改--商品id
             self.goodId=self.$route.params.id
-            //console.log(self.goodId)     
+            console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
         },
@@ -168,11 +168,14 @@
             async getSpecification(){
                 let self = this;
                 let result = await self.$http.get(`api/be/product/getSpecification`)
+                console.log(result)
                 //获取商品规格属性
                 self.speData=result.data
                 //生成表格的表头
                 let skuName1='';
                 let skuName2='';
+                console.log(self.speData.length)
+                console.log(self.speData)
                 for(let i=0;i<self.speData.length;i++){
                     if(self.speData[i].id==1){
                         skuName1=self.speData[i].name;
@@ -191,10 +194,15 @@
                     // sizeId:{lable:'尺寸ID'},
                     // goods_specification_ids:{lable:'id组合'}
                 }
+                
                 //根据商品id获取到规格 specListArr-商品规格  productList--规格表格
                 let resultSpe = await self.$http.get(`api/be/product/list?goods_id=${self.goodId}`)
                 let specListArr=resultSpe.data.specificationList
                 let productList=resultSpe.data.productList
+                //特殊情况 商品初始无规格后期新增规格
+                if(specListArr.length==0 && productList.length>0){
+                    productList=[];
+                }
                 //商品规格
                 console.log(specListArr)
                 if(specListArr.length>0){
@@ -368,7 +376,8 @@
                 console.log(self.goodsSkuList)
                 
             },
-            async saveGoodSku(){
+            async saveGoodSku(evt){
+                evt.preventDefault();
                 let self = this
                 //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
                 self.goodsSkuTable.data=[];                           

@@ -233,7 +233,6 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                 let result = await self.$http.get(`api/be/goods/info?id=${self.goodId}`)
                 self.goodForm = result.data;
                 console.log(self.goodForm)
-                console.log(self.goodForm.standard)
                 //数据备份
                 self.good_backup={...result.data};   
                 //上架/规格--数字转布尔

@@ -80,7 +80,7 @@
                                     <template slot="goods_number" slot-scope="data">
                                         <b-form-input v-model="data.item[2].goods_number"></b-form-input>
                                     </template>
-                                    <template slot="id" slot-scope="data">                                     
+                                    <!-- <template slot="id" slot-scope="data">                                     
                                         <b-form-input v-model="data.item[2].id"></b-form-input>
                                     </template>
                                     <template slot="colorId" slot-scope="data">                                     
@@ -91,7 +91,7 @@
                                     </template>
                                     <template slot="goods_specification_ids"  slot-scope="data">
                                          <b-form-input v-model="data.item[2].goods_specification_ids"></b-form-input>
-                                    </template>
+                                    </template> -->
                                 </b-table>
                                 <div class="speBtn"> <b-button type="submit" variant="primary"> 保存 </b-button> </div>
                             </b-row>
@@ -158,8 +158,7 @@
         async mounted () {
             let self = this;
             //新增/修改--商品id
-            //self.goodId=self.$route.params.id      
-            self.goodId=1181096
+            self.goodId=self.$route.params.id
             //console.log(self.goodId)     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
@@ -186,11 +185,11 @@
                     size:{label:skuName2,sortable:false},                   
                     retail_price:{label:'价格'},
                     integral:{label:'积分'},
-                    goods_number:{label:'库存',sortable:false},
-                    id:{lable:'ID'},
-                    colorId:{lable:'颜色ID'},
-                    sizeId:{lable:'尺寸ID'},
-                    goods_specification_ids:{lable:'id组合'}
+                    goods_number:{label:'库存',sortable:false}
+                    // id:{lable:'ID'},
+                    // colorId:{lable:'颜色ID'},
+                    // sizeId:{lable:'尺寸ID'},
+                    // goods_specification_ids:{lable:'id组合'}
                 }
                 //根据商品id获取到规格 specListArr-商品规格  productList--规格表格
                 let resultSpe = await self.$http.get(`api/be/product/list?goods_id=${self.goodId}`)
@@ -218,8 +217,7 @@
                     }
                 } 
                 //self.goodsSkuList.push(['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id'])
-                //商品id--生成商品规格table--self.goodsSkuList
-                console.log(self.goodsSkuList)              
+                //商品id--生成商品规格table--self.goodsSkuList             
                 console.log(productList)
                 console.log(self.goodsSkuList)
                 if(productList.length>0){
@@ -341,10 +339,6 @@
                         }
                     }
                 }
-                console.log(self.skuData1)
-                console.log(self.skuData2)
-                console.log(skuData1NameArr)
-                console.log(skuData2NameArr)
                 console.log(self.goodsSkuList)
                 //skuData1NameArr--skuData2NameArr 生成表格数据
                 //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
@@ -364,11 +358,13 @@
                 for(let j=0;j<self.skuTempId.length;j++){
                     for(let temp=0;temp<self.goodsSkuList.length;temp++){
                         if(self.skuTempId[j][2].goods_specification_ids==self.goodsSkuList[temp][2].goods_specification_ids){
-                            self.goodsSkuList[temp][2].id=self.skuTempId[j][2].id                   
+                            self.goodsSkuList[temp][2].id=self.skuTempId[j][2].id  
+                            self.goodsSkuList[temp][2].goods_number=self.skuTempId[j][2].goods_number                 
+                            self.goodsSkuList[temp][2].integral=self.skuTempId[j][2].integral
+                            self.goodsSkuList[temp][2].retail_price=self.skuTempId[j][2].retail_price
                         }
                     }                   
                 }
-                 console.log(self.goodsSkuList[0][2].id)
                 console.log(self.goodsSkuList)
                 
             },
@@ -391,10 +387,18 @@
                 //return false;
                 let resultSku = await self.$http.post(`api/be/product/storeProduct`,self.goodsSkuTable)
                 console.log(resultSku)
-                if(resultSku.data.length>0){
-                    for(let i=0;i<resultSku.data.length;i++){
-                         self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id;             
+                if(resultSku.errno==0){
+                    if(resultSku.data.length>0){
+                        for(let i=0;i<resultSku.data.length;i++){
+                            self.goodsSkuTable.data[i].id=self.goodsSkuList[i][2].id=resultSku.data[i].id;             
+                        }
                     }
+                    self.showModal ();
+                    self.addGoodMsg='保存成功';
+                    this.addGoodFlag=true;
+                }else{
+                        self.showModal ();
+                        self.addGoodMsg='保存失败';
                 } 
                 //深拷贝--保存提交--用于表格数据id赋值--
                 self.skuTempId=[...self.goodsSkuList]    

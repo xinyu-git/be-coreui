@@ -234,7 +234,7 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
             },
             async saveGood(){
                 let self=this;
-                return false;  
+                //return false;  
                 let result=await self.$http.post('api/be/goods/store',self.goodForm)
                 if(self.goodForm.standard){
                     //有规格--获取商品id传入规格页面

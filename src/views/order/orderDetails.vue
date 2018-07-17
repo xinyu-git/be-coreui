@@ -10,8 +10,8 @@
                                 <b-col>{{items.consignee}} </b-col>
                             </b-row>
                             <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>收货地址:</b></b-col>
-                                <b-col>{{items.address}}</b-col>
+                                <b-col sm="3" class="text-sm-right"><b>收货地址:</b></b-col>       
+                                <b-col>{{items.province_name+''+items.city_name+''+items.district_name+''+items.address}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>手机号码:</b></b-col>
@@ -26,6 +26,10 @@
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>付款时间:</b></b-col>
                                 <b-col> {{items.pay_time | formatTime}}</b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>支付状态:</b></b-col>
+                                <b-col>{{items.pay_status_text}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>商品总额:</b></b-col>
@@ -65,7 +69,7 @@
                     </b-row>
                     <b-row class="justify-content-md-end">
                         <b-col sm="2" class="text-sm-right"><b>应付总额:</b></b-col>
-                        <b-col sm="2" class="text-sm-right">{{items.order_price+items.shipping_fee-items.coupon_price-items.integral}}</b-col>
+                        <b-col sm="2" class="text-sm-right">{{items.order_price+items.shipping_fee-items.coupon_price}}</b-col>
                     </b-row>
                 </b-container>
           </b-card>

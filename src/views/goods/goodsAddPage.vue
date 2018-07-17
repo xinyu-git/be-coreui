@@ -5,7 +5,7 @@
                 <b-breadcrumb :items="items"/>
             </div>
             <div class="addGoods-btn">
-                <b-button variant='primary lg'>返回列表</b-button>
+                <!-- <b-button variant='primary lg'>返回列表</b-button> -->
             </div>
         </div>
        <div class="container-fluid">

@@ -5,7 +5,7 @@
                <b-breadcrumb :items="items"/>
            </div>
            <div class="addGoods-btn">
-               <b-button variant='primary lg'>添加订单</b-button>
+               <!-- <b-button variant='primary lg'>添加订单</b-button> -->
            </div>
        </div>
        <div class="container-fluid">
@@ -26,7 +26,7 @@
                 <b-row class="container-box">
                     <b-col lg="12">
                         <b-table  striped hover border :items="orderData" :fields="fieldsOrder">
-                            <template slot="add_time" slot-scope="time">                             
+                            <template slot="add_time" slot-scope="time">                           
                                 {{time.value}}
                             </template>
                             <template slot="order_status_text" slot-scope="data">

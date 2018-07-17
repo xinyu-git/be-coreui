@@ -50,7 +50,7 @@
                         <b-table  :items="buyGoodsDetails" :fields="fieldsBuyGoods" class="table-details">
                             <template slot="goods_name" slot-scope="data">
                                 <img class='orderimg' :src='data.item.list_pic_url' />
-                                <a href="javascript:;" target="_blank">{{data.item.goods_name}}</a>
+                                <a href="javascript:;" target="_blank">{{data.item.goods_name+''+data.item.goods_specifition_name_value }}</a>
                             </template>
                         </b-table>
                 </b-container>

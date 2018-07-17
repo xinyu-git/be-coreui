@@ -24,12 +24,16 @@
                                 <b-col>{{items.pay_name}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>下单时间:</b></b-col>
+                                <b-col> {{items.add_time}}</b-col>
+                            </b-row>
+                            <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>付款时间:</b></b-col>
-                                <b-col> {{items.pay_time | formatTime}}</b-col>
+                                <b-col> {{items.pay_time}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>支付状态:</b></b-col>
-                                <b-col>{{items.pay_status_text}}</b-col>
+                                <b-col>{{items.order_status_text}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>商品总额:</b></b-col>

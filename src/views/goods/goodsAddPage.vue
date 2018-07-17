@@ -231,6 +231,7 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                 //修改--获取商品Id,渲染数据
                 let self= this;
                 let result = await self.$http.get(`api/be/goods/info?id=${self.goodId}`)
+                console.log(result)
                 self.goodForm = result.data;
                 console.log(self.goodForm)
                 //数据备份

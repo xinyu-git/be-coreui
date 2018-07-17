@@ -61,7 +61,7 @@
                                         class="col-sm-6"
                                         :rows="3"
                                         v-model="goodForm.gallerys"
-                                        placeholder="请输入商品轮播图地址,多个图片以“,”分割">
+                                        placeholder="请输入商品轮播图地址,多个图片以“;”(英文符合)分割">
                                     </b-form-textarea>                                      
                     </b-form-group>
                      

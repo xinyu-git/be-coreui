@@ -55,7 +55,7 @@
             return {
                 items: [{
                     text: '首页',
-                    href: '#'
+                    href: '#/dashboard'
                 }, {
                     text: '商品管理',
                     href: '#'

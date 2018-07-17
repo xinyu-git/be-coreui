@@ -54,7 +54,7 @@ import {formatTime} from '../../filters/index.js'
             return {
                 items: [{
                     text: '首页',
-                    href: '#'
+                    href: '#/dashboard'
                 }, {
                     text: '订单中心',
                     href: '#'

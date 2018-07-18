@@ -41,7 +41,7 @@
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>应支付金额:</b></b-col>
-                                <b-col>{{items.order_price}}</b-col>
+                                <b-col>{{items.order_price+items.shipping_fee-items.coupon_price}}</b-col>
                             </b-row>
                         </b-card>
                     </b-card-group>

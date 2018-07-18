@@ -5,7 +5,7 @@
                <b-breadcrumb :items="items"/>
            </div>
            <div class="addGoods-btn">
-               <b-button variant='primary lg' @click="GoodsAddPage(-999)">添加商品</b-button>
+               <b-button variant='primary lg' @click="editGoods(-999)">添加商品</b-button>
            </div>
        </div>
        <div class="container-fluid">
@@ -45,7 +45,6 @@
    </div>
 </template>
 <script>
-//import { Switch as cSwitch } from '@coreui/vue'
     export default{
         name:'goodList',
         components:{
@@ -103,12 +102,9 @@
                     self.goodsList=result.data.data;
                 }
             },
-            GoodsAddPage(id){
-                 this.$router.push('/goods/goodsAddPage/'+id+'')
-            },
             editGoods(id){
                 let self=this;
-                self.$router.push('/goods/goodsAddPage/'+id+' ')
+                self.$router.push({name:'goodsAddPage',params:{id:id}})
             }
         }
     }

@@ -112,7 +112,6 @@
 
 
 <script>
-    //import skuTypeOne from './skuTypeOne'
     export default{
         name:'goodsStandard',
         components:{
@@ -128,14 +127,12 @@
                     checked:false,
                     id:''
                 },
-               // skuData1NameArr:[],
                 skuData2:[],
                 skuItem2:{
                     name:'',
                     checked:false,
                     id:''
                 },
-                //skuData2NameArr:[],
                 goodsSkuList: [],
                 fieldsSkuList:{
                     // color:{label:'颜色',sortable:false},
@@ -148,18 +145,14 @@
                 addGoodMsg:'',
                 addGoodFlag:false,
                 spdelete : [],
-                skuTempId:[],
-                skuTempId1:[]
-                
-
+                skuTempId:[]
             }
 
         },
         async mounted () {
             let self = this;
             //新增/修改--商品id
-            self.goodId=self.$route.params.id
-            console.log(self.goodId)     
+            self.goodId=self.$route.params.id     
             //获取商品规格属性 be/product/list?goods_id=1181000
             self.getSpecification();        
         },
@@ -174,8 +167,6 @@
                 //生成表格的表头
                 let skuName1='';
                 let skuName2='';
-                console.log(self.speData.length)
-                console.log(self.speData)
                 for(let i=0;i<self.speData.length;i++){
                     if(self.speData[i].id==1){
                         skuName1=self.speData[i].name;
@@ -204,7 +195,6 @@
                     productList=[];
                 }
                 //商品规格
-                console.log(specListArr)
                 if(specListArr.length>0){
                     for(var i=0;i<specListArr.length;i++){
                         //1--颜色 2--规格 
@@ -226,8 +216,6 @@
                 } 
                 //self.goodsSkuList.push(['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分',{goods_number:100},'id'])
                 //商品id--生成商品规格table--self.goodsSkuList             
-                console.log(productList)
-                console.log(self.goodsSkuList)
                 if(productList.length>0){
                     //skuListTemp 临时存放表格每一项信息
                     let skuListTemp=[];
@@ -248,8 +236,6 @@
                 }
                 //深拷贝--页面初始加载--用于表格数据id赋值
                 self.skuTempId=[...self.goodsSkuList] 
-                console.log(self.skuTempId)
-                console.log(self.goodsSkuList)
             },
             addSpe(type){
                 let self=this;
@@ -328,8 +314,7 @@
 
                 //return false;
                 self.goodsSkuGroup.spdelete = self.spdelete;
-                let resultStore = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup);  
-                console.log(resultStore)           
+                let resultStore = await self.$http.post(`api/be/product/storeSp`,self.goodsSkuGroup);            
                 if(resultStore.data.length>0){
                     let temp1 = 0;
                     let temp2 = 0;
@@ -347,7 +332,7 @@
                         }
                     }
                 }
-                console.log(self.goodsSkuList)
+
                 //skuData1NameArr--skuData2NameArr 生成表格数据
                 //self.goodsSkuList ['浅杏粉','1.5m床垫*1+枕头*2','价格'，'积分','库存','id','颜色id','尺寸id']
                 for (let t = 0; t < skuData1NameArr.length; t++) {
@@ -360,7 +345,6 @@
 		            }
                 }
 
-                // skuTempId 0-3  goodsSkuList 0-5
                 //skuTempId深拷贝已保存的table数据。通过比较goods_specification_ids相等，赋值id
                 //self.goodsSkuList表格数据
                 for(let j=0;j<self.skuTempId.length;j++){
@@ -373,15 +357,13 @@
                         }
                     }                   
                 }
-                console.log(self.goodsSkuList)
-                
+                               
             },
             async saveGoodSku(evt){
                 evt.preventDefault();
                 let self = this
                 //self.goodsSkuTable--返给后台的表格数据  self.goodsSkuList表格创建数据
                 self.goodsSkuTable.data=[];                           
-                console.log(self.goodsSkuList)
                 for(let i=0;i<self.goodsSkuList.length;i++){
                     self.goodsSkuTable.data.push({
                         id:self.goodsSkuList[i][2].id,
@@ -392,10 +374,8 @@
                         integral:self.goodsSkuList[i][2].integral
                     })
                 }
-                console.log(self.goodsSkuTable)
                 //return false;
                 let resultSku = await self.$http.post(`api/be/product/storeProduct`,self.goodsSkuTable)
-                console.log(resultSku)
                 if(resultSku.errno==0){
                     if(resultSku.data.length>0){
                         for(let i=0;i<resultSku.data.length;i++){
@@ -404,16 +384,14 @@
                     }
                     self.showModal ();
                     self.addGoodMsg='保存成功';
-                    this.addGoodFlag=true;
+                    //addGoodFlag 如果添加成功，点击确定按钮，关闭弹窗，返回商品列表页
+                    self.addGoodFlag=true;
                 }else{
-                        self.showModal ();
-                        self.addGoodMsg='保存失败';
+                    self.showModal ();
+                    self.addGoodMsg='保存失败';
                 } 
                 //深拷贝--保存提交--用于表格数据id赋值--
-                self.skuTempId=[...self.goodsSkuList]    
-                console.log(self.skuTempId)
-                console.log(self.goodsSkuList) 
-                console.log(self.goodsSkuTable)               
+                self.skuTempId=[...self.goodsSkuList]                  
             },
             showModal () {
                 this.$refs.myModalRef.show();

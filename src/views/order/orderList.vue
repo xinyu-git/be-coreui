@@ -109,7 +109,7 @@ import {formatTime} from '../../filters/index.js'
             },
             viewOrder (id){
                 let self=this;
-                self.$router.push('/order/orderDetails/'+id+' ')
+                self.$router.push({name:'orderDetails',params:{id:id}})
             }
         },
         filters: {

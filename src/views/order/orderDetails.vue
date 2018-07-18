@@ -108,7 +108,6 @@ import {formatTime} from '../../filters/index.js'
               let result = await self.$http.get(`api/be/order/info?id=${self.id}`)
               if(result.errno==0){
                     self.orderGoodsData.push(result.data); 
-                    console.log(self.orderGoodsData)
                     self.buyGoodsDetails=result.data.orderGoods;
               }
             }

@@ -263,7 +263,8 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                     if(result.errno==0){
                         self.showModal ();
                         self.addGoodMsg='添加商品成功';
-                        this.addGoodFlag=true;
+                        //addGoodFlag 如果添加成功，点击确定按钮，关闭弹窗，返回商品列表页
+                        self.addGoodFlag=true;
                     }else{
                         self.showModal ();
                         self.addGoodMsg='添加商品失败';

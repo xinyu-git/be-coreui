@@ -92,7 +92,7 @@ import {formatTime} from '../../filters/index.js'
                 fieldsBuyGoods:{
                     goods_name:{label:'商品',sortable:false,tdClass:'goodsNameTd'},
                     goods_sn:{label:'商品编号',sortable:false},
-                    market_price:{label:'商品价格',sortable:false},
+                    retail_price:{label:'商品价格',sortable:false},
                     number:{label:'商品数量',sortable:false},
                     integral:{label:'积分',sortable:false}
                 }
@@ -108,6 +108,7 @@ import {formatTime} from '../../filters/index.js'
               let result = await self.$http.get(`api/be/order/info?id=${self.id}`)
               if(result.errno==0){
                     self.orderGoodsData.push(result.data); 
+                    console.log(self.orderGoodsData)
                     self.buyGoodsDetails=result.data.orderGoods;
               }
             }

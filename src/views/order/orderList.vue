@@ -125,7 +125,7 @@ import {formatTime} from '../../filters/index.js'
 .content-nav .breadcrumb-box{flex: 1;color:#8492A6;}
 .content-nav .breadcrumb-box .breadcrumb{background: none;border:none;margin-bottom: 0;}
 .addGoods-btn{width: auto;display:flex;align-items: center;}
-.orderimg{width:180px;height:100px;}
+.orderimg{width:100px;height:100px;}
 .simpleDesc{width: 500px;}
 .container-box{background: #fff;padding:10px 0;}
 .orderTips{text-align: center;}

@@ -20,28 +20,32 @@
                         </b-card>
                          <b-card title="付款信息">
                             <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>付款方式:</b></b-col>
-                                <b-col>{{items.pay_name}}</b-col>
+                                <b-col sm="3" class="text-sm-right"><b>订单号:</b></b-col>
+                                <b-col>{{items.order_sn}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>下单时间:</b></b-col>
                                 <b-col> {{items.add_time}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>付款时间:</b></b-col>
-                                <b-col> {{items.pay_time}}</b-col>
+                                <b-col sm="3" class="text-sm-right"><b>支付方式:</b></b-col>
+                                <b-col>{{items.pay_name}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
                                 <b-col sm="3" class="text-sm-right"><b>支付状态:</b></b-col>
                                 <b-col>{{items.order_status_text}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>商品总额:</b></b-col>
-                                <b-col> {{items.order_price}}</b-col>
+                                <b-col sm="3" class="text-sm-right"><b>支付时间:</b></b-col>
+                                <b-col> {{items.pay_time}}</b-col>
+                            </b-row>        
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>应付金额:</b></b-col>
+                                <b-col>{{items.order_price+items.shipping_fee-items.coupon_price}}</b-col>
                             </b-row>
                             <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>应支付金额:</b></b-col>
-                                <b-col>{{items.order_price+items.shipping_fee-items.coupon_price}}</b-col>
+                                <b-col sm="3" class="text-sm-right"><b>应扣积分:</b></b-col>
+                                <b-col> {{items.integral}}</b-col>
                             </b-row>
                         </b-card>
                     </b-card-group>
@@ -56,7 +60,7 @@
                 </b-container>
                 <b-container class="container-margin" v-for="items in orderGoodsData" :key="items.id">
                     <b-row class="justify-content-md-end">
-                        <b-col sm="2" class="text-sm-right"><b>商品总额:</b></b-col>
+                        <b-col sm="2" class="text-sm-right"><b>商品总金额:</b></b-col>
                         <b-col sm="2" class="text-sm-right">{{items.order_price}}</b-col>
                     </b-row>
                     <b-row class="justify-content-md-end">
@@ -64,17 +68,17 @@
                         <b-col sm="2" class="text-sm-right">{{items.shipping_fee}}</b-col>
                     </b-row>
                     <b-row class="justify-content-md-end">
-                        <b-col sm="2" class="text-sm-right"><b>优惠券:</b></b-col>
+                        <b-col sm="2" class="text-sm-right"><b>优惠金额:</b></b-col>
                         <b-col sm="2" class="text-sm-right">{{items.coupon_price}}</b-col>
                     </b-row>
                     <b-row class="justify-content-md-end">
-                        <b-col sm="2" class="text-sm-right"><b>积分:</b></b-col>
-                        <b-col sm="2" class="text-sm-right">{{items.integral}}</b-col>
-                    </b-row>
-                    <b-row class="justify-content-md-end">
-                        <b-col sm="2" class="text-sm-right"><b>应付总额:</b></b-col>
+                        <b-col sm="2" class="text-sm-right"><b>应付金额:</b></b-col>
                         <b-col sm="2" class="text-sm-right">{{items.order_price+items.shipping_fee-items.coupon_price}}</b-col>
                     </b-row>
+                    <b-row class="justify-content-md-end">
+                        <b-col sm="2" class="text-sm-right"><b>应扣积分:</b></b-col>
+                        <b-col sm="2" class="text-sm-right">{{items.integral}}</b-col>
+                    </b-row>                    
                 </b-container>
           </b-card>
        </div>
@@ -90,11 +94,11 @@ import {formatTime} from '../../filters/index.js'
                 orderGoodsData:[],
                 buyGoodsDetails:[],
                 fieldsBuyGoods:{
-                    goods_name:{label:'商品',sortable:false,tdClass:'goodsNameTd'},
+                    goods_name:{label:'商品名称',sortable:false,tdClass:'goodsNameTd'},
                     goods_sn:{label:'商品编号',sortable:false},
                     retail_price:{label:'商品价格',sortable:false},
-                    number:{label:'商品数量',sortable:false},
-                    integral:{label:'积分',sortable:false}
+                    integral:{label:'积分',sortable:false},
+                    number:{label:'商品数量',sortable:false}                   
                 }
             }
         },
@@ -123,6 +127,6 @@ import {formatTime} from '../../filters/index.js'
 <style lang="scss">
 .container-margin{margin-bottom: 20px;}
 .table-details th,.table-details td{border-bottom:1px solid #c8ced3 ;vertical-align: middle;text-align: center;}
-.orderimg{width:100px;height:60px;}
+.orderimg{width:100px;height:100px;}
 .goodsNameTd{width: 400px;}
 </style>

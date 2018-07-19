@@ -39,7 +39,7 @@
                             horizontal
                             :label-cols="1"
                             label-size="md" 
-                            label="商品图片" 
+                            label="商品列表图片" 
                             label-class="text-sm-right"
                             label-for="goodsPicInput">
                         <b-form-input   id="goodsPicInput"
@@ -47,7 +47,21 @@
                                         size="md" 
                                         class="col-sm-4"
                                         v-model="goodForm.list_pic_url"
-                                        placeholder="请输入商品图片地址"></b-form-input>
+                                        placeholder="请输入商品列表图片地址"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="goodsPic1Label" 
+                            horizontal
+                            :label-cols="1"
+                            label-size="md" 
+                            label="商品主图图片" 
+                            label-class="text-sm-right"
+                            label-for="goodsPic1Input">
+                        <b-form-input   id="goodsPic1Input"
+                                        required
+                                        size="md" 
+                                        class="col-sm-4"
+                                        v-model="goodForm.primary_pic_url"
+                                        placeholder="请输入商品主图图片地址"></b-form-input>
                     </b-form-group>
                     <b-form-group id="goodsFocusPicLabel" 
                             horizontal
@@ -63,8 +77,7 @@
                                         v-model="goodForm.gallerys"
                                         placeholder="请输入商品轮播图地址,多个图片以“;”(英文符合)分割">
                                     </b-form-textarea>                                      
-                    </b-form-group>
-                     
+                    </b-form-group>                    
                     <b-form-group id="goodsPriceLabel" 
                             horizontal
                             :label-cols="1"
@@ -203,6 +216,7 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                     name:'',
                     goods_desc:'',
                     list_pic_url:'',
+                    primary_pic_url:'',
                     gallerys:'',
                     retail_price:'',
                     goods_number:'',

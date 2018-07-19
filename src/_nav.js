@@ -18,18 +18,18 @@ export default {
             name: '商品列表',
             url: '/goods/goodsList',
             icon: 'fa fa-circle'
-          },
-          {
-            name: '商品分类',
-            url: '/base/cards',
-            icon: 'fa fa-circle'
           }
-          ,
-          {
-            name: '品牌管理',
-            url: '/base/cards',
-            icon: 'fa fa-circle'
-          }
+          // ,
+          // {
+          //   name: '商品分类',
+          //   url: '/base/cards',
+          //   icon: 'fa fa-circle'
+          // },
+          // {
+          //   name: '品牌管理',
+          //   url: '/base/cards',
+          //   icon: 'fa fa-circle'
+          // }
         ]
       },
       {

@@ -12,14 +12,22 @@
             <b-card>
                 <b-row>
                     <b-col sm="1"><label for="orderSn" class="text-sm-right">订单号</label></b-col>
-                    <b-col sm="3">
+                    <b-col sm="2">
                         <b-form-input id="orderSn" size="Default" v-model="orderSn"></b-form-input>
                     </b-col>
                     <b-col sm="1"><label for="consignee" >收货人</label></b-col>
-                    <b-col sm="3">
+                    <b-col sm="2">
                         <b-form-input id="consignee" size="Default" v-model="consignee"></b-form-input>
                     </b-col>
+                    <b-col sm="1"><label for="consignee" >支付状态</label></b-col>
                     <b-col sm="2">
+                        <b-form-select v-model="pay_status" class="mb-3">
+                            <option :value="null">请选择支付状态</option>
+                            <option value="0">未付款</option>
+                            <option value="201">已付款</option>
+                        </b-form-select>
+                    </b-col>
+                    <b-col sm="1">
                         <b-button  variant="primary lg" @click="onSubmitFilter()">查询</b-button>
                     </b-col>
                 </b-row>
@@ -69,6 +77,7 @@ import {formatTime} from '../../filters/index.js'
                 count:0,
                 orderSn:'',
                 consignee:'',
+                pay_status:'',
                 orderTips:'暂无数据',
                 fieldsOrder:{
                     id:{label:'ID',sortable:false},

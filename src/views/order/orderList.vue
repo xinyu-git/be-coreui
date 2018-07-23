@@ -22,9 +22,12 @@
                     <b-col sm="1"><label for="consignee" >支付状态</label></b-col>
                     <b-col sm="2">
                         <b-form-select v-model="pay_status" class="mb-3">
-                            <option :value="null">请选择支付状态</option>
+                            <option value=" ">请选择支付状态</option>
+                            <option value="101">订单已取消</option>
                             <option value="0">未付款</option>
                             <option value="201">已付款</option>
+                            <option value="300">已发货</option>
+                            <option value="301">已收货</option>
                         </b-form-select>
                     </b-col>
                     <b-col sm="1">
@@ -104,8 +107,9 @@ import {formatTime} from '../../filters/index.js'
             },
             async getOrderList() {
                 let self = this;
+                self.orderData=[];
                 let result = await this.$http.get(
-                    `api/be/order/index?page=${self.currentPage}&size=${self.pageSize}&orderSn=${self.orderSn}&consignee=${self.consignee}`
+                    `api/be/order/index?page=${self.currentPage}&size=${self.pageSize}&orderSn=${self.orderSn}&consignee=${self.consignee}&pay_status=${self.pay_status}`
                 );
                 if(result.errno==0){
                     if(result.data.count!=0){

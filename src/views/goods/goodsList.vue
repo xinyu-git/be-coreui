@@ -28,8 +28,8 @@
                             <template slot="is_hot" slot-scope="data">
                                 {{data.item.is_hot ? '是' : '否'}}
                             </template>
-                            <template slot="is_on_sale" slot-scope="data">
-                                {{data.item.is_on_sale ? '是' : '否'}}
+                            <template slot="is_delete" slot-scope="data">
+                                {{data.item.is_delete ? '已下架' : '已上架'}}
                             </template>
                             <template slot="goodsOperation" slot-scope="data">
                                 <b-button  variant="primary sm" @click="editGoods(data.item.id)">编辑</b-button>
@@ -75,7 +75,7 @@
                     goods_number:{label:'库存',sortable:false},
                     is_new:{label:'新品',sortable:false},
                     is_hot:{label:'人气',sortable:false},
-                    is_on_sale:{label:'上架',sortable:false},
+                    is_delete:{label:'上架',sortable:false},
                     sort_order:{label:'排序',sortable:true},
                     goodsOperation :{label:'操作',sortable:false}
                 }

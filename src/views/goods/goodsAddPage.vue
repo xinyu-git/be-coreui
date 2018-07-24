@@ -74,6 +74,7 @@
                                         size="md" 
                                         class="col-sm-6"
                                         :rows="3"
+                                        :max-rows="6"
                                         v-model="goodForm.gallerys"
                                         placeholder="请输入商品轮播图地址,多个图片以“;”(英文符合)分割">
                                     </b-form-textarea>                                      
@@ -125,7 +126,7 @@
                             label="上架" 
                             label-class="text-sm-right"
                             >
-                         <c-switch class="mx-1" color="info" v-model="goodForm.is_on_sale"  variant="3d" />
+                         <c-switch class="mx-1" color="info" v-model="goodForm.is_delete"  variant="3d" />
                     </b-form-group>
                     <b-form-group id="goodsStandard" 
                             horizontal
@@ -223,7 +224,7 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                     integral:'',
                     is_new:0,
                     is_hot:0,
-                    is_on_sale:false,
+                    is_delete:true,
                     sort_order:100,
                     standard:false
                 },
@@ -250,11 +251,11 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor'
                 console.log(self.goodForm)
                 //数据备份
                 self.good_backup={...result.data};   
-                //上架/规格--数字转布尔
-                if(self.goodForm.is_on_sale==1){
-                    self.goodForm.is_on_sale=true;
-                }else if(self.goodForm.is_on_sale==0){
-                    self.goodForm.is_on_sale=false
+                //上架/规格--数字转布尔 0--上架 1--下架
+                if(self.goodForm.is_delete==1){
+                    self.goodForm.is_delete=false;
+                }else if(self.goodForm.is_delete==0){
+                    self.goodForm.is_delete=true
                 }
                 if(self.goodForm.standard==1){
                     self.goodForm.standard=true;

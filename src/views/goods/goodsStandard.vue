@@ -236,6 +236,7 @@
                 }
                 //深拷贝--页面初始加载--用于表格数据id赋值
                 self.skuTempId=[...self.goodsSkuList] 
+                console.log(self.goodsSkuList)
             },
             addSpe(type){
                 let self=this;

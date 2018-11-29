@@ -110,6 +110,7 @@ import {formatTime} from '../../filters/index.js'
             async getOrderDetails() {
               let self = this;
               let result = await self.$http.get(`api/be/order/info?id=${self.id}`)
+              console.log(result)
               if(result.errno==0){
                     self.orderGoodsData.push(result.data); 
                     self.buyGoodsDetails=result.data.orderGoods;
